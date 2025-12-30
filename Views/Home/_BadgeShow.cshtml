@@ -1,0 +1,186 @@
+﻿@model List<EventManagement.Models.BadgeDetailsScanning>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <h4>Record Instert on :- @item.RecInsTime</h4>
+        <h4 class="float-end text-danger"><b>Total Kit Distribute : - @ViewBag.KitTotal</b></h4>
+
+        <table id="tblprint" class="table table-responsive table-hover table-bordered">
+            <thead>
+                <tr>
+                    <td>Event</td>
+                    <td><b>@item.EventName</b></td>
+                    <td>Category</td>
+                    <td><b>@item.Category</b></td>
+                </tr>
+
+                <tr>
+                    <td>Name  </td>
+                    <td><b>@item.Name</b></td>
+                    <td>Designation  </td>
+                    <td><b>@item.Designation</b></td>
+                </tr>
+
+                <tr>
+                    <td>Company </td>
+                    <d><b>@item.Company</b></d>
+                    <td>Mobile </td>
+                    <td><b>@item.Mobile</b></td>
+                </tr>
+
+                <tr>
+                    <td>Country </td>
+                    <td><b>@item.Country</b></td>
+                    <td>Photo </td>
+                    <td>
+                        <img src="../Content/BadgePhoto/@Session["EventName"].ToString()/@item.Photo" height="70px" width="70px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>IDType </td>
+                    <td><b>@item.IDType</b></td>
+                    <td>IDNumber  </td>
+                    <td><b>@item.IDNumber</b></td>
+                </tr>
+
+                <tr>
+
+                    <td>Remarks </td>
+                    <td><b>@item.Remarks</b></td>
+                    <td>IsPrint </td>
+                    <td><b>@item.IsPrint</b></td>
+                </tr>
+                <tr>
+                    <td>PrintOn </td>
+                    <td><b>@item.PrintOn</b></td>
+                    <td>ReprintOn </td>
+                    <td><b>@item.ReprintOn</b></td>
+                </tr>
+                <tr>
+                    <td>VisitOn </td>
+                    <td><b>@item.VisitOn</b></td>
+                    <td>KitCollect </td>
+                    <td><b>@item.KitCollect</b></td>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-hover table-bordered table-success">
+            <thead>
+                <tr>
+                    <td>Category Allow for Kit</td>
+                    <td>
+                        @if (@item.IsKitAllow == "No")
+                        {
+                            <img src="~/Content/images/cross.png" />
+                        }
+                        else
+                        {
+                            <img src="~/Content/images/ok.png" />
+                        }
+                    </td>
+                    <td>Category Allow for Payment</td>
+                    <td>
+                        @if (@item.IsPaymentAllow == "No")
+                        {
+                            <img src="~/Content/images/cross.png" />
+                        }
+                        else
+                        {
+                            <img src="~/Content/images/ok.png" />
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>Is Kit Collect</td>
+                    <td>@item.KitCollect</td>
+                    <td>Is Payment Done</td>
+                    <td>
+                        @if (@item.PaymentStatus == false)
+                        {<p>No</p>}
+                        else
+                        { <p>Yes / @item.PaymentOn</p>}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Collect by</td>
+                    <td>@item.CollectBy</td>
+                    <td>Collect On</td>
+                    <td>@item.CollectOn</td>
+                </tr>
+            </thead>
+        </table>
+
+
+
+        <div id="divmsg" class="text-success">
+            @if (item.KitCollect == "Yes" && item.IsPrint == "Yes")
+            {
+                <h2 class="text-success">
+                    Badge printed. Registerd on @item.RecInsTime or
+                    Visited on @item.VisitOn and Kit collected by @item.CollectBy on @item.CollectOn
+                </h2>
+            }
+            @if (item.IsPrint == "Yes" && item.KitCollect == "No")
+            {
+                <h3>Badge Printed on @item.PrintOn or Event visited on @item.VisitOn <span class="text-warning"> waiting for kit collection. </span></h3>
+            }
+            @if (item.IsPrint == "No" && item.KitCollect == "No")
+            {
+                <h3 class="text-warning">
+                    Badge not printed. Registerd on @item.RecInsTime
+                    waiting for print... (If you want to print this badge go to print badge menu and print this badge..)
+                </h3>
+            }
+        </div>
+        <div class="clearfix"></div>
+        if (item.IsKitAllow.ToLower() == "yes" && item.IsPaymentAllow.ToLower() == "yes")
+        {
+            if (item.KitCollect.ToLower() == "no" && item.PaymentStatus == false)
+            {
+                <div class="text-center">
+                    <button type="button" id="btnkitcollect" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Update Kit Collection or payment status
+                    </button>
+                </div>
+            }
+        }
+        else if (item.IsKitAllow.ToLower() == "yes")
+        {
+            if (item.KitCollect.ToLower() == "no")
+            {
+                <div class="text-center">
+                    <button type="button" id="btnkitcollectonly" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Update Kit Collection
+                    </button>
+                </div>
+            }
+        }
+        <div class="modal fade" tabindex="-1" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Kit collecter Info</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    @using (Html.BeginForm("updatebadgekitstatus", "Home", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                    {
+                        <div class="modal-body">
+                            <input type="hidden" id="BadgeId" name="BadgeId" value="@item.BadgeId" />                                                  
+                            <input type="text" id="txtName" name="CollectBy" placeholder="Name of Kit collecter *" class="form-control" required="" />
+                            <div class="clearfix mt-2"></div>
+                            <br />
+                            <input type="text" id="txtRemarks" name="Remarks" placeholder="Remarks..." style=" height:120px; width:100%; border:1px solid;" />
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update Details</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+

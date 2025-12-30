@@ -1,0 +1,110 @@
+﻿@model EventManagement.Models.allbadgebyevent
+@{
+    ViewBag.Title = "MasterBadge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Master Badge</h3>
+            <div class="col-12 m-2">
+                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Event Name</th>
+                            <th>Total Count</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.EventExcelUpload != null)
+                        {
+                            int count = 1;
+                            foreach (var item in Model.EventExcelUpload)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.EventName</td>
+                                    <td>@item.TotalExcel</td>
+                                    <td>
+                                        <a class="btn btn-success" id="btnshow" href="#" onclick="ShowAllbadge(@item.EventId)">View Badges</a>
+                                        @Html.ActionLink("Delete", "DeleteMasrterBadge", "Admin", new { id = item.EventId },
+                                       new { @class = "btn btn-danger", onclick = "return confirm('Are you sure you want to delete all badge from this event record from database.?');" })
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="mdlBadge" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content" style="background-color:#F1F1F1">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Alert</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 m-2" style="overflow:scroll;">
+                    <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Category</th>
+                                <th>Special No</th>
+                                <th>NAME</th>
+                                <th>Designation</th>
+                                <th>Company</th>
+                                <th>Mobile</th>
+                                <th>Country</th>
+                                <th>ID Type</th>
+                                <th>ID Number</th>
+                                <th>Photo</th>
+                                <th>Is Print</th>
+                                <th>Print On</th>
+                                <th>Is Reprint</th>
+                                <th>Reprint On</th>
+                                <th>Remarks</th>
+                                <th>Data Insert by</th>
+                                <th>Is Active</th>
+                                <th>Is Visit</th>
+                                <th>Visit On</th>
+                                <th>Kit Collect</th>
+                                <th>Collect On</th>
+                                <th>Collect By</th>                              
+                            </tr>
+                        </thead>
+                        <tbody id="tblBadge">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function ShowAllbadge(vId) {        
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetAllBadges", "Admin")',
+            data: { EventId: vId},
+            success: function (data) {
+                $("#tblBadge").empty();
+                $("#tblBadge").append(data);
+                $("#mdlBadge").modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert("Error occurred");
+            }
+        });
+    }
+</script>
+

@@ -1,0 +1,64 @@
+﻿@model EventManagement.Models.BulkQR
+@{
+    ViewBag.Title = "BulkQR";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+  
+}
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Add/View Bulk QR</h3>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("BulkQR", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-6 p-2">
+                            <div id="divEvent">
+                                <label>Select Event</label>
+                                <select id="Event" name="EventId" class="form-select" tabindex="1">
+                                    <option value="0">Select</option>
+                                    @if (Model?.EventDrop != null)
+                                    {
+                                        foreach (var item in Model.EventDrop)
+                                        {
+                                            <option value="@item.EventId">@item.EventName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divEvent">
+                                <label>Select Category</label>
+                                <select id="CategoryId" name="CategoryName" class="form-select" tabindex="1">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divCategoryName">
+                                <label>Company Name</label>
+                                <input type="text" id="tcompany" name="Company" tabindex="2" maxlength="4"
+                                       placeholder="Please fill company name" class="form-control alphanumericOnly" />
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divCategoryName">
+                                <label>Total No</label>
+                                <input type="text" id="TotalCount" name="Total" tabindex="2" maxlength="4"
+                                       placeholder="Please fill total badge" class="form-control alphanumericOnly" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="clearfix mt-2"></div>
+                    <div class="text-center">
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                        <input type="submit" value="Reset" class="btn btn-warning" />
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+</div>
+

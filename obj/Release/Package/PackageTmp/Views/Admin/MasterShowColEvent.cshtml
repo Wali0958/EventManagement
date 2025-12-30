@@ -1,0 +1,152 @@
+﻿@model EventManagement.Models.EventSettingColumns
+@{
+    ViewBag.Title = "MasterShowColEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .disabled-checkbox {
+        pointer-events: none; /* Prevents user clicks */
+        opacity: 0.5; /* Makes it look disabled */
+        cursor: not-allowed; /* Changes cursor to indicate disabled */
+    }
+</style>
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Add/View Event Badge Columns</h3>
+            <p class="text-danger">Selected columns will show on add new badge page also print only those columns on badge</p>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("MasterShowColEvent", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-4 p-2">
+                            <label><b>Select Event</b></label>
+                            <select id="ddlEventId" name="EventId" class="form-select" tabindex="1">
+                                @if (Model?.EventDrop != null)
+                                {
+                                    foreach (var item in Model.EventDrop)
+                                    {
+                                        <option value="@item.EventId">@item.EventName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-8 mt-2">
+                            <label><b>check Columns for show in event badge page</b></label>
+                            <div class="mt-1">
+
+
+                                <label> <input type="checkbox" id="chkRName" name="RName" class="form-check-input disabled-checkbox" value="true" checked />&nbsp;Name</label>
+                                &nbsp;&nbsp;
+
+                                <label> <input type="checkbox" id="chkDesignation" name="Designation" class="form-check-input disabled-checkbox" value="true" checked />&nbsp;Designation</label>
+                                &nbsp;&nbsp;
+
+                                <label> <input type="checkbox" id="chkCompany" name="Company" class="form-check-input disabled-checkbox" value="true" checked />&nbsp;Company</label>
+                                &nbsp;&nbsp;
+                                <label>
+                                    <input type="checkbox" id="chkCategory" name="Category" class="form-check-input" value="true"  />&nbsp;Category
+                                </label>
+                                &nbsp;&nbsp;
+
+                                @*<label> <input type="checkbox" id="chkSpecialNo" name="SpecialNo" class="form-check-input" value="true" />&nbsp;Special No</label>
+                                    &nbsp;&nbsp;*@
+                                @*<label> <input type="checkbox" id="chkMobile" name="Mobile" class="form-check-input" value="true" />&nbsp;Mobile</label>
+
+                                    &nbsp;&nbsp;
+                                    <label> <input type="checkbox" id="chkEmail" name="Email" class="form-check-input" value="true" />&nbsp;Email</label>
+                                *@
+
+                                <label> <input type="checkbox" id="chkCountry" name="Country" class="form-check-input disabled-checkbox" value="true" checked />&nbsp;Country</label>
+                                &nbsp;&nbsp;
+                                @*<div class="mt-2"></div>*@
+                                @*<label> <input type="checkbox" id="chkIdType" name="IdType" class="form-check-input" value="true" />&nbsp;IdType</label>
+                                    &nbsp;&nbsp;
+                                    <label> <input type="checkbox" id="chkIdNumber" name="IdNumber" class="form-check-input" value="true" />&nbsp;IdNumber</label>
+                                    &nbsp;&nbsp;*@
+                                <label> <input type="checkbox" id="chkPhoto" name="Photo" class="form-check-input" value="true" />&nbsp;Photo</label>
+                                &nbsp;&nbsp;
+                                <label> <input type="checkbox" id="chkBarCode" name="BarCode" class="form-check-input disabled-checkbox" value="true" checked />&nbsp;BarCode</label>
+                                @*&nbsp;&nbsp;
+                                    <label> <input type="checkbox" id="chkRemarks" name="Remarks" class="form-check-input" value="true" />&nbsp;Remarks</label>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix mt-4"></div>
+                    <div class="text-center">
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                        <input type="submit" value="Reset" class="btn btn-warning" />
+                    </div>
+                }
+                <div class="clearfix mt-2"></div>
+                <div style="overflow:scroll;">
+                    <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable overflow-scroll table-striped" style="overflow:scroll;">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Event Name</th>
+
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Company</th>
+                                <th>Category</th>
+                                @*<th>SpecialNo</th>*@
+                                @*<th>Mobile</th>
+                                <th>Email</th>*@
+                                <th>Country</th>
+                                @*<th>IdType</th>
+                                    <th>IdNumber</th>*@
+                                <th>Photo</th>
+                                <th>BarCode</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model?.EventcolumnsDrop != null)
+                            {
+                                int count = 1;
+                                foreach (var item in Model.EventcolumnsDrop)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@item.EventName</td>
+                                        <td>@(item.RName ? "Yes" : "No")</td>
+                                        <td>@(item.Designation ? "Yes" : "No")</td>
+                                        <td>@(item.Company ? "Yes" : "No")</td>
+                                        <td>@(item.Category ? "Yes" : "No")</td>
+                                        @*<td>@(item.SpecialNo ? "Yes" : "No")</td>*@
+                                        @*<td>@(item.Mobile ? "Yes" : "No")</td>
+                                        <td>@(item.Email ? "Yes" : "No")</td>*@
+                                        <td>@(item.Country ? "Yes" : "No")</td>
+                                        @*<td>@(item.IdType ? "Yes" : "No")</td>
+                                            <td>@(item.IdNumber ? "Yes" : "No")</td>*@
+                                        <td>@(item.Photo ? "Yes" : "No")</td>
+                                        <td>@(item.BarCode ? "Yes" : "No")</td>
+                                        <td>@(item.IsActive ? "Active" : "Deactive")</td>
+
+                                        <td>
+                                            @if (item.IsActive)
+                                            {
+                                                @Html.ActionLink("Deactive", "DeactiveEventcolumns", "Admin", new { id = item.ColumnID }, new { @class = "btn btn-warning" })
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Active", "ActiveEventcolumns", "Admin", new { id = item.ColumnID }, new { @class = "btn btn-success" })
+                                            }
+                                            <div class="clearfix mt-1"></div>
+                                            @Html.ActionLink("Delete", "DeleteEventcolumns", "Admin", new { id = item.ColumnID, eventid = item.EventId }, new { @class = "btn btn-danger" })
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+

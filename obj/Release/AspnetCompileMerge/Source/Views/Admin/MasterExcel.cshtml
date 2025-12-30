@@ -1,0 +1,139 @@
+﻿@model EventManagement.Models.Excelupload
+@{
+    ViewBag.Title = "MasterExcel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Upload Excel</h3>
+
+            <div class="col-12">
+                <div class="row">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="col-md-6 p-3 bg-white">
+                        <p>1. Please download and insert data as per template</p>
+                        <p>2. To change data, delete & upload new excel</p>
+                        <a href="~/Content/excel.xlsx">Demo Excel Sheet</a>
+
+                        <div class="clearfix m-2"></div>
+
+                        @using (Html.BeginForm("MasterExcel", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="row">
+                                <div class="col-md-12 p-2">
+                                    <label>Select Event</label>
+                                    <select id="EventId" name="EventId" class="form-select">
+                                        @if (Model?.EventDrop != null)
+                                        {
+                                            foreach (var item in Model.EventDrop)
+                                            {
+                                                <option value="@item.EventId">@item.EventName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12 p-2">
+                                    <label>Upload Excel</label>
+                                    <input type="file" id="excelfile" name="excelfile" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <input type="submit" value="Submit" class="btn btn-success" />
+                                <input type="reset" value="Reset" class="btn btn-warning" />
+                            </div>
+                        }
+
+                        <div class="clearfix mt-4"></div>
+
+                        <table class="table table-responsive table-success table-hover table-bordered mtable">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Event Name</th>
+                                    <th>Total ExcelUpload Count</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model?.EventExcelUpload != null)
+                                {
+                                    int count = 1;
+                                    foreach (var item in Model.EventExcelUpload)
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@item.EventName</td>
+                                            <td>@item.TotalExcel</td>
+                                            <td>
+                                                @Html.ActionLink(
+                                                    "Delete",
+                                                    "DeleteMasrterExcel",
+                                                    "Admin",
+                                                    new { id = item.EventId },
+                                                    new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Delete?')" }
+                                                )
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="col-md-6 p-3 bg-white border-1 border-start">
+                        <input type="button" value="Send WhatsApp Msg to All" class="btn btn-info float-end mb-2" />
+                        <div class="clearfix mt-4"></div>
+                        <div style="overflow: auto; max-height: 500px;">
+                            <table class="table table-responsive table-success table-hover table-bordered mtable">
+                                <thead>
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th>Event Name</th>
+                                        <th>Name</th>
+                                        <th>Company</th>
+                                        <th>Designation</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model?.EventExcelUploadListwht != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in Model.EventExcelUploadListwht)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.EventName</td>
+                                                <td>@item.Name</td>
+                                                <td>@item.Company</td>
+                                                <td>@item.Designation</td>
+                                                <td>
+                                                    @Html.ActionLink(
+                                                        "Send Msg",
+                                                        "SendWhtsupMsg",
+                                                        "Admin",
+                                                        new { id = item.EventId },
+                                                        new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Send message?')" }
+                                                    )
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

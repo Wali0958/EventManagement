@@ -1,0 +1,108 @@
+﻿@model List<EventManagement.Models.BadgeDetailsScanning>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PrintwithKiosk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+    body {
+        background-image: url('@Url.Content("~/Content/Kiosk/" + ViewBag.bgimg)');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        margin: 0;
+    }
+    .overlay {
+        background-color: rgba(0, 0, 0, 0);
+        color: black;
+        min-height: 100px;
+        font-family:'Times New Roman', Times, serif;
+        font-style:italic;
+        font-size:50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="card-body">
+            <div class="overlay">
+                <div style="margin:auto;">@ViewBag.Title</div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="row">
+
+                <div class="row">
+                    <div class="col-12 mt-1">
+                        <input type="text" id="BadgeIdKiosk"  tabindex="1" autofocus="" name="BadgeId" maxlength="15"
+                               placeholder="Scan the QR and Others" autocomplete="on" autofocus class="form-control" />
+                    </div>
+                    <div class="clearfix mt-5"></div>
+                    <div id="tbodysearch">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script>
+    function alertmsg() {
+        if (@TempData["msg"]!= null) {
+            Swal.fire(@TempData["msg"]);
+        }
+            }
+    </script>
+    <script>
+    $(document).ready(function () {
+        let typingTimer;
+        const doneTypingInterval = 500; // Wait time (ms) before triggering AJAX on typing
+        const $input = $('#BadgeIdKiosk');
+        // Trigger AJAX call
+        function triggerAjaxKiosk() {
+            const textValue = $input.val().trim();
+            if (textValue.length === 0) return; // Don’t call if empty
+            $.ajax({
+                url: '@Url.Action("KioskDataShow", "Home")',
+                type: 'GET',
+                data: { input: textValue },
+                success: function (response) {
+                    $('#tbodysearch').html(response);
+                },
+                error: function () {
+                    $('#tbodysearch').html("Error retrieving data.");
+                }
+            });
+        }
+        // When typing — delay the AJAX trigger
+        $input.on('input', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(triggerAjaxKiosk, doneTypingInterval);
+        });
+        // When pressing Enter (for scanners that send Enter)
+        $input.on('keypress', function (e) {
+            if (e.which === 13) { // Enter key
+                e.preventDefault();
+                clearTimeout(typingTimer);
+                triggerAjaxKiosk();
+            }
+        });
+    });
+    </script>
+</body>
+
+
+</html>

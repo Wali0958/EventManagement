@@ -1,0 +1,125 @@
+﻿@model List<EventManagement.Models.BadgeDetailsScanning>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <h4>Record Instert on :- @item.RecInsTime</h4>
+        <div class="clearfix mt-2"></div>
+        <table id="tblprint" class="table table-responsive table-hover table-bordered" style="width:100%">
+            <tbody>
+                <tr>
+                    <td>Event</td>
+                    <td class="text-danger fa-2x"><b>@item.EventName</b></td>
+                </tr>
+                <tr>
+                    <td>Category</td>
+                    <td class="text-danger fa-2x"><b>@item.Category</b></td>
+                </tr>
+                <tr>
+                    <td>Name  </td>
+                    <td class="text-danger fa-2x"><b>@item.Name</b></td>
+                </tr>
+                <tr>
+                    <td>Designation  </td>
+                    <td class="text-danger fa-2x"><b>@item.Designation</b></td>
+
+                </tr>
+                <tr>
+                    <td>Company </td>
+                    <td class="text-danger fa-2x"><b>@item.Company</b></td>
+                </tr>
+                <tr>
+                    <td>Mobile </td>
+                    <td><b>@item.Mobile</b></td>
+                </tr>
+                <tr>
+                    <td>Country </td>
+                    <td><b>@item.Country</b></td>
+                </tr>
+                <tr>
+                    <td>Photo </td>
+                    <td>
+                        @if (@item.Photo == null)
+                        {<p>NA</p> }
+                        else
+                        {
+                            <img src="../Content/BadgePhoto/@Session["EventName"].ToString()/@item.Photo" height="70px" width="70px" />
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>Remarks </td>
+                    <td>
+                        @if (@item.Remarks == null)
+                        {
+                            <p>NA</p>
+                        }
+                        else
+                        {
+                            <b>@item.Remarks</b>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+        <div class="text-center">
+            <input type="button" class="btn btn-primary text-center" onclick="Reprint(@item.BadgeId)" value="Print Badge" />
+        </div>
+        <div class="clearfix"></div>
+    }
+}
+<div id="divshowpanel" style="display:none;"></div>
+<script>
+    function Reprint(BadgeId) {
+        $.ajax({
+            url: '@Url.Action("PrintBadgeCodeSearch", "Home")',
+            type: 'GET',
+            data: { BadgeId: BadgeId },
+            success: function (response) {
+                if (response.success) {                    
+                        $('#divshowpanel').html(response.mData);
+                        setTimeout(function () {
+                            var divContents = $("#divprint").html();
+                            var printWindow = window.open('', '', 'height=600,width=800');
+                            printWindow.document.write('<html><head>');
+                            printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                            printWindow.document.write('</head><body>');
+                            printWindow.document.write(divContents);
+                            printWindow.document.write('</body></html>');
+                            printWindow.document.close();
+                            printWindow.focus();
+                            printWindow.print();
+                            printWindow.close();
+                            $.ajax({
+                                url: '@Url.Action("updatebadgeafterReprint", "Home")',
+                                type: 'POST',
+                                data: { BadgeId: BadgeId },
+                                success: function (updateResponse) {
+                                    if (updateResponse.success) {
+                                       $('#modelprintbadge').modal('hide');
+                                    } else {
+                                        alert("Oops! Error occurred while updating print status.");
+                                    }
+                                },
+                                error: function () {
+                                    alert('An error occurred while updating print status.');
+                                }
+                            });
+                        }, 500);
+                    
+                }
+                else {
+                    alert(response.message);
+                    window.location.href = '@Url.Action("PrintWithKiosk", "Home")';
+                }
+            },
+            error: function () {
+                alert('An error occurred');
+            }
+        });
+    }
+</script>
+
+

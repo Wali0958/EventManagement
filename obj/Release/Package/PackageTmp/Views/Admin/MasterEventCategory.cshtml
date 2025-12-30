@@ -1,0 +1,120 @@
+﻿@model EventManagement.Models.EventCat
+@{
+    ViewBag.Title = "MasterEventCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Add/View Categroy (Event Wise)</h3>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("MasterEventCategory", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-6 p-2">
+                            <div id="divEvent">
+                                <label>Select Event</label>
+                                <select id="ddlEventId" name="EventId" class="form-select" tabindex="1">
+                                    @if (Model?.EventDrop != null)
+                                    {
+                                        foreach (var item in Model.EventDrop)
+                                        {
+                                            <option value="@item.EventId">@item.EventName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divCategoryName">
+                                <label>Category Name</label>
+                                <input type="text" id="CategoryName" name="CategoryName" tabindex="2" maxlength="75"
+                                       placeholder="Please fill category name" class="form-control alphanumericOnly" />
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divCategoryName">
+                                <label>Category Substitue Name</label>
+                                <input type="text" id="CategroySubName" name="CategroySubName" tabindex="3" maxlength="2"
+                                       placeholder="Please fill category substitue name" class="form-control alphanumericOnly" />
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divCategoryName">
+                                <label>Allow for kit</label>
+                                <select id="ddlkit" name="IsKitAllow" tabindex="4" class="form-select">
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divCategoryName">
+                                <label>Allow for Payment</label>
+                                <select id="ddlpayment" name="IsPaymentAllow" tabindex="5" class="form-select">
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix mt-2"></div>
+                    <div class="text-center">
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                        <input type="submit" value="Reset" class="btn btn-warning" />
+                    </div>
+                }
+                <div class="clearfix mt-2"></div>
+                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Event Name</th>
+                            <th>Category Name</th>
+                            <th>Categroy Substitue Name</th>
+                            <th>Kit status</th>
+                            <th>Payment status</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.EventCatAll != null)
+                        {
+                            int count = 1;
+                            foreach (var item in Model.EventCatAll)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.EventName</td>
+                                    <td>@item.CategoryName</td>
+                                    <td>@item.CategroySubName</td>
+                                    <td>@(item.IsKitAllow ? "Yes": "No")</td>
+                                    <td>@(item.IsPaymentAllow ? "Yes": "No")</td>
+                                    <td>@(item.IsActive ? "Active" : "Deactive")</td>
+                                    <td>
+                                        @if (item.IsActive)
+                                        {
+                                            @Html.ActionLink("Deactive", "DeactiveEventCategory", "Admin", new { id = item.CategoryId }, new { @class = "btn btn-warning" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Active", "ActiveEventCategory", "Admin", new { id = item.CategoryId }, new { @class = "btn btn-success" })
+                                        }
+                                        <div class="clearfix mt-1"></div>
+                                        @Html.ActionLink("Delete", "DeleteEventCategory", "Admin", new { id = item.CategoryId }, new { @class = "btn btn-danger" })
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+
+

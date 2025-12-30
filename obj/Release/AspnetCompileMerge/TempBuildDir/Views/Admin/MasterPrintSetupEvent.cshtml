@@ -1,0 +1,80 @@
+﻿@model  EventManagement.Models.EventPrintSetup
+
+@{
+    ViewBag.Title = "MasterPrintSetupEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Master Print Setup</h3>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("MasterPrintSetupEvent", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-12 p-2">
+                            <div id="divEvent">
+                                <label>Select Event</label>
+                                <select id="EventId" name="EventId" class="form-select" tabindex="1">
+                                    @if (Model?.EventDrop != null)
+                                    {
+                                        <option value="0">--Select--</option>
+                                        foreach (var item in Model.EventDrop)
+                                        {
+                                            <option value="@item.EventId">@item.EventName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-9 d-none" id="mdiv">
+                            <table id="tblprint" class="table table-responsive table-bordered table-hover table-primary">
+                                <thead>
+                                    <tr>
+                                        <th>Columns</th>
+                                        <th>Margin-Top</th>
+                                        <th>Margin-Bottom</th>
+                                        <th>Margin-Left</th>
+                                        <th>Margin-Right</th>
+                                        <th>Font-Size</th>
+                                        <th>Font-Name</th>
+                                        <th>Font-Weight</th>
+                                        <th>Position</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbldata">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="row d-none mt-0" id="abutt">
+                                    <div class="col-12 text-center">
+                                        <button class="btn btn-primary" id="validateBtn" onclick="return formValidation();">Save/Update Badge Position Save</button>
+                                    </div>
+                                </div>
+                                <div class="clearfix mt-2"></div>
+                                <div id="mprintshowdata">
+                                </div>
+                                <div class="clearfix mt-2"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+                <div class="clearfix mt-3"></div>
+
+                <br />
+                <p class="text-danger">If Columns Photo/Barcode (Header Font-Size,Font Name belong to Height or Width)</p>
+                <div class="clearfix mt-3"></div>
+                <p class="text-primary">
+                    <b>Fonts names for help:-</b> Times New Roman, Georgia, Garamond, Palatino, Book Antiqua, Times, Arial, Helvetica, Verdana, Tahoma, Trebuchet MS, Calibri, Courier New, Monaco,
+                    Lucida Console, Brush Script MT, Dancing Script, Comic Sans MS, Impact, Copperplate, Papyrus
+                </p>
+                <br />
+            </div>
+        </section>
+    </div>
+</div>

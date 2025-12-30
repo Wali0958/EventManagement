@@ -1,0 +1,101 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|f:\\event final aziz\\eventfinalfinal\\eventmanagement\\views\\shared\\_addbadge.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|solutionrelative:views\\shared\\_addbadge.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|F:\\event final aziz\\EventFinalFinal\\EventManagement\\views\\admin\\masterevent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|solutionrelative:views\\admin\\masterevent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|F:\\event final aziz\\EventFinalFinal\\EventManagement\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|solutionrelative:controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|F:\\event final aziz\\EventFinalFinal\\EventManagement\\views\\admin\\masterexcel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|solutionrelative:views\\admin\\masterexcel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|F:\\event final aziz\\EventFinalFinal\\EventManagement\\models\\eventmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD977907-39B5-4CAA-9933-524A8E9C7756}|EventManagement.csproj|solutionrelative:models\\eventmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "_AddBadge.cshtml",
+              "DocumentMoniker": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Views\\Shared\\_AddBadge.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_AddBadge.cshtml",
+              "ToolTip": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Views\\Shared\\_AddBadge.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_AddBadge.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAACmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-10T15:54:18.584Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MasterEvent.cshtml",
+              "DocumentMoniker": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Views\\Admin\\MasterEvent.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\MasterEvent.cshtml",
+              "ToolTip": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Views\\Admin\\MasterEvent.cshtml",
+              "RelativeToolTip": "Views\\Admin\\MasterEvent.cshtml",
+              "ViewState": "AQIAAFAAAAAAAAAAAAAIwF8AAAByAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-03T17:30:05.136Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EventModels.cs",
+              "DocumentMoniker": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Models\\EventModels.cs",
+              "RelativeDocumentMoniker": "Models\\EventModels.cs",
+              "ToolTip": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Models\\EventModels.cs",
+              "RelativeToolTip": "Models\\EventModels.cs",
+              "ViewState": "AQIAAOoAAAAAAAAAAIA6wP0AAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-03T17:09:38.169Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
+              "ToolTip": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "Controllers\\AdminController.cs",
+              "ViewState": "AQIAAEUEAAAAAAAAAAAAAFUEAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-03T17:05:23.24Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MasterExcel.cshtml",
+              "DocumentMoniker": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Views\\Admin\\MasterExcel.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\MasterExcel.cshtml",
+              "ToolTip": "F:\\event final aziz\\EventFinalFinal\\EventManagement\\Views\\Admin\\MasterExcel.cshtml",
+              "RelativeToolTip": "Views\\Admin\\MasterExcel.cshtml",
+              "ViewState": "AQIAAFsAAAAAAAAAAMBdwGEAAAA7AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-03T16:56:58.855Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,332 @@
+﻿@model EventManagement.Models.BadgeDetailsScanning
+@{
+    ViewBag.Title = "Master Search Badge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Master Search Badge</h3>
+            <div class="col-12 m-2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="mb-2"><b>Please enter Name/Company/Designation/Mobile/Email/QrCode-No for find</b></label>
+                        <input type="text" id="txtSearch" tabindex="1" autofocus="" name="SearchText" maxlength="35"
+                               placeholder="Please enter Name/Company/Designation/Mobile/Email/QrCode-No for find" class="form-control" />
+                    </div>
+                    @*<div class="col-md-2">
+                        <button type="submit" id="btnsearch" class="btn btn-info" style="margin-top:24px;">Search</button>
+                    </div>*@
+                    <div class="clearfix mt-3"></div>
+                    <div class="overflow-scroll">
+                        <table class="table table-responsive table-hover table-bordered table-success">
+                            <thead>
+                                <tr>
+                                    <th>QR No</th>
+                                    <th>Name/Mobile/Email/Country</th>
+                                    <th>Category</th>
+                                    <th>Designation</th>
+                                    <th>Company</th>
+                                    @*<th>Kit Taken by Visitor</th>
+                                        <th>Allow for Kit</th>*@
+                                    <th>Payment Status</th>
+                                    <th>Print Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodysearch">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="clearfix mt-2"></div>
+                <br />
+            </div>
+        </section>
+    </div>
+</div>
+<div id="divshowpanel" style="display:none;"></div>
+<div class="modal fade" id="modelprintbadge" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p class="text-center"><b>Update status or Print Badge</b></p>
+                <div class="clearfix mt-2"></div>
+                <div id="divshowpanelmodal">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modeleditbadge" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+                <p class="text-center"><h4>Edit Badge Record</h4></p>
+                <div class="col-12">
+                    <input type="hidden" id="hfbadgeid" Value="0" />
+                    <p>Name</p>
+                    <input type="text" id="txteditname" placeholder="Enter Name" maxlength="75" class="form-control" />
+                    <div class="clearfix mt-2"></div>
+                    <p>Designation</p>
+                    <input type="text" id="txteditdesignation" placeholder="Enter Designation" maxlength="75" class="form-control" />
+                    <div class="clearfix mt-2"></div>
+                    <p>Company</p>
+                    <input type="text" id="txteditcomapny" placeholder="Enter Company" maxlength="75" class="form-control" />
+                    <div class="clearfix mt-2"></div>
+                    <input type="submit" value="Update Details" onclick="UpdateBadge()" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Printstatus(BadgeId) {
+        $.ajax({
+            url: '@Url.Action("PrintBadgeCodeSearch", "Home")',
+            type: 'GET',
+            data: { BadgeId: BadgeId },
+            success: function (response) {
+                if (response.success) {
+                    if (response.mData1 == "Only Print") {
+                        $('#divshowpanel').html(response.mData);
+                        setTimeout(function () {
+                            var divContents = $("#divprint").html();
+                            var printWindow = window.open('', '', 'height=600,width=800');
+                            printWindow.document.write('<html><head>');
+                            printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                            printWindow.document.write('</head><body>');
+                            printWindow.document.write(divContents);
+                            printWindow.document.write('</body></html>');
+                            printWindow.document.close();
+                            printWindow.focus();
+                            printWindow.print();
+                            printWindow.close();
+                            $.ajax({
+                                url: '@Url.Action("updatebadgeafterprint", "Home")',
+                                type: 'POST',
+                                data: { BadgeId: BadgeId },
+                                success: function (updateResponse) {
+                                    if (updateResponse.success) {
+                                      $('#modelprintbadge').modal('hide');
+                                    } else {
+                                        alert("Oops! Error occurred while updating print status.");
+                                    }
+                                },
+                                error: function () {
+                                    alert('An error occurred while updating print status.');
+                                }
+                            });
+                        }, 500);
+                    }
+                    else {
+                        $('#divshowpanelmodal').html(response.mData);
+                        $('#modelprintbadge').modal('show');
+                    }
+                } else {
+                    alert(response.message);
+                    window.location.href = '@Url.Action("MasterSearchBadge", "Home")';
+                }
+            },
+            error: function () {
+                alert('An error occurred');
+            }
+        });
+    }
+</script>
+<script>
+    function Printthroughpopup(BadgeId) {
+        var formData = new FormData();
+        if ($("#hfboth").val() == "1") {
+           // $("#CollectBy").val() == "" || $("#CollectBy").val() == null ||
+            if ( $("#commentsname").val() == "" || $("#commentsname").val() == null) {
+                alert("Please fill valid details.")
+            }
+            else {
+                formData.append("BadgeId", BadgeId);
+                formData.append("kitstatus", 0);// $("#ddlkitstatus").val();
+                formData.append("CollectBy",""); //$("#CollectBy").val()
+                formData.append("Payment",1)// $("#ddlpayment").val();
+                formData.append("commentsnam1e", $("#commentsname").val());
+                $.ajax({
+                    url: '@Url.Action("PrintBadgeCodeAfterupdate", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false, // Needed for FormData
+                    processData: false, // Needed for FormData
+                    success: function (response) {
+                        if (response.success) {
+                            $('#divshowpanel').html(response.mData);
+                            setTimeout(function () {
+                                var divContents = $("#divprint").html();
+                                var printWindow = window.open('', '', 'height=600,width=800');
+                                printWindow.document.write('<html><head>');
+                                printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                                printWindow.document.write('</head><body>');
+                                printWindow.document.write(divContents);
+                                printWindow.document.write('</body></html>');
+                                printWindow.document.close();
+                                printWindow.focus();
+                                printWindow.print();
+                                printWindow.close();
+                            }, 500);
+                            $('#modelprintbadge').modal('hide');
+                        }
+                        else {
+                            alert(response.message);
+                            window.location.href = '@Url.Action("MasterSearchBadge", "Home")';
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred');
+                    }
+                });
+            }
+        }
+        else {
+            //$("#CollectBy").val() == "" || $("#CollectBy").val() == null &&
+            if ( $("#commentsname").val() == "" || $("#commentsname").val() == null) {
+                alert("Please fill valid details.")
+            }
+            else {
+                formData.append("BadgeId", BadgeId);
+                formData.append("kitstatus",0);//$("#ddlkitstatus").val()
+                formData.append("CollectBy", "");// $("#CollectBy").val()
+                formData.append("commentsname", $("#commentsname").val());
+                $.ajax({
+                    url: '@Url.Action("PrintBadgeCodeAfterupdate", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false, // Needed for FormData
+                    processData: false, // Needed for FormData
+                    success: function (response) {
+                        if (response.success) {
+                            $('#divshowpanel').html(response.mData);
+                            setTimeout(function () {
+                                var divContents = $("#divprint").html();
+                                var printWindow = window.open('', '', 'height=600,width=800');
+                                printWindow.document.write('<html><head>');
+                                printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                                printWindow.document.write('</head><body>');
+                                printWindow.document.write(divContents);
+                                printWindow.document.write('</body></html>');
+                                printWindow.document.close();
+                                printWindow.focus();
+                                printWindow.print();
+                                printWindow.close();
+                            }, 500);
+                           $('#modelprintbadge').modal('hide');
+                        }
+                        else {
+                            alert(response.message);
+                            window.location.href = '@Url.Action("MasterSearchBadge", "Home")';
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred');
+                    }
+                });
+            }
+        }
+    }
+</script>
+<script>
+    function Reprint(BadgeId) {
+        $.ajax({
+            url: '@Url.Action("PrintBadgeCodeSearch", "Home")',
+            type: 'GET',
+            data: { BadgeId: BadgeId },
+            success: function (response) {
+                if (response.success) {
+                    if (response.mData1 == "update status or then print") {
+                        $('#divshowpanelmodal').html(response.mData);
+                        $('#modelprintbadge').modal('show');                    }
+                    else {
+                        $('#divshowpanel').html(response.mData);
+                        setTimeout(function () {
+                            var divContents = $("#divprint").html();
+                            var printWindow = window.open('', '', 'height=600,width=800');
+                            printWindow.document.write('<html><head>');
+                            printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                            printWindow.document.write('</head><body>');
+                            printWindow.document.write(divContents);
+                            printWindow.document.write('</body></html>');
+                            printWindow.document.close();
+                            printWindow.focus();
+                            printWindow.print();
+                            printWindow.close();
+                            $.ajax({
+                                url: '@Url.Action("updatebadgeafterReprint", "Home")',
+                                type: 'POST',
+                                data: { BadgeId: BadgeId },
+                                success: function (updateResponse) {
+                                    if (updateResponse.success) {
+                                       $('#modelprintbadge').modal('hide');
+                                    } else {
+                                        alert("Oops! Error occurred while updating print status.");
+                                    }
+                                },
+                                error: function () {
+                                    alert('An error occurred while updating print status.');
+                                }
+                            });
+                        }, 500);
+                    }
+                }
+                else {
+                    alert(response.message);
+                    window.location.href = '@Url.Action("MasterSearchBadge", "Home")';
+                }
+            },
+            error: function () {
+                alert('An error occurred');
+            }
+        });
+    }
+</script>
+<script>
+    function Editcode(btn) {
+        var row = $(btn).closest("tr"); // now this is the clicked row
+        $("#txteditname").val(row.find("td:eq(1) .val-name").text().trim());
+        $("#hfbadgeid").val(row.find("td:eq(2) .val-sudo").text().trim());
+        $("#txteditdesignation").val(row.find("td:eq(3)").text());
+        $("#txteditcomapny").val(row.find("td:eq(4)").text());
+        $('#modeleditbadge').modal('show');
+    }
+</script>
+<script>
+    function UpdateBadge() {
+        var BadgeId = $("#hfbadgeid").val();
+        var mName = $("#txteditname").val();
+        var Company = $("#txteditdesignation").val();
+        var Designation = $("#txteditcomapny").val();
+        $.ajax({
+            url: '@Url.Action("UpdateBadge", "Home")',
+            type: 'POST',
+            data: { BadgeId: BadgeId, Name: mName, Company: Company, Designation: Designation },
+            success: function (response) {
+                if (response.success) {
+                    alert("details update successfully.After refrest it will display.Please print this page.")
+                    $('#modeleditbadge').modal('hide');
+                }
+                else {
+                    alert(response.message);
+                    window.location.href = '@Url.Action("MasterSearchBadge", "Home")';
+                }
+            },
+            error: function () {
+                alert('An error occurred');
+            }
+        });
+    }
+</script>
+
+
+
+
+
+

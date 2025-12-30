@@ -1,0 +1,9 @@
+﻿.bg {
+    /*background-image: url('images/nadeem icon.PNG');*/
+    background-image: url('images/a2.jpg');
+    background-repeat:no-repeat;
+    /*background-image: url('images/a2.jpg');*/
+    z-index: 999999999999 !important;
+    opacity: inherit;
+    opacity: 2.0;
+}

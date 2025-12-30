@@ -1,0 +1,159 @@
+﻿@model EventManagement.Models.Dashboard
+@{
+    ViewBag.Title = "AdminDashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    <style>
+        .mdashboard {
+            height: 160px;
+            width: 100%;
+            margin: 1px 1px 1px 1px;
+            padding: 1px 1px 1px 1px;
+            border-radius: 10px;
+        }
+    </style>
+}
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Admin Dashboard</h3>
+            <div class="clearfix mt-1"></div>
+            <br />
+            <div class="col-md-12">
+                <div class="row text-white text-center">
+                    <div class="col-md-3">
+                        <div class="bg-primary mdashboard mt-4">
+                            <div class="mt-4">
+                                <h2>Total Event</h2>
+                                <h2>@Model.TotalEvent</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-3 bg-success mdashboard mt-4">
+                            <div class="mt-4">
+                                <h2>Total User</h2>
+                                <h2>@Model.TotalUser</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-3 bg-danger mdashboard mt-4">
+                            <div class="mt-4">
+                                <h2>Total Badge Print</h2> <h2>@Model.TotalBadge</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-3 bg-warning mdashboard mt-4">
+                            <div class="mt-4">
+                                <h2>Badge Not Print</h2> <h2>@Model.TotalBadgeNo</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Event Name</th>
+                            <th>Total Count</th>
+                            <th>Event Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.EventExcelUpload != null)
+                        {
+                            int count = 1;
+                            foreach (var item in Model.EventExcelUpload)
+                            {
+                                DateTime mDate = @item.EventDate;
+                                string mFinalDate = mDate.ToString("dd-MMMM-yyyy");
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.EventName</td>
+                                    <td>@item.TotalExcel</td>
+                                    <td>@mFinalDate</td>
+                                    <td>
+                                        <a class="btn btn-success" id="btnshow" href="#" onclick="ShowAllbadge(@item.EventId)">View Badges</a>
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div class="clearfix mt-1"></div>
+        <br />
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="mdlBadge" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content" style="background-color:#F1F1F1">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Alert</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 m-2" style="overflow:scroll;">
+                    <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Category</th>
+                                <th>Special No</th>
+                                <th>NAME</th>
+                                <th>Designation</th>
+                                <th>Company</th>
+                                <th>Mobile</th>
+                                <th>Country</th>
+                                <th>ID Type</th>
+                                <th>ID Number</th>
+                                <th>Photo</th>
+                                <th>Is Print</th>
+                                <th>Print On</th>
+                                <th>Is Reprint</th>
+                                <th>Reprint On</th>
+                                <th>Remarks</th>
+                                <th>Data Insert by</th>
+                                <th>Is Active</th>
+                                <th>Is Visit</th>
+                                <th>Visit On</th>
+                                <th>Kit Collect</th>
+                                <th>Collect On</th>
+                                <th>Collect By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBadge">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function ShowAllbadge(vId) {
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetAllBadges", "Admin")',
+            data: { EventId: vId},
+            success: function (data) {
+                $("#tblBadge").empty();
+                $("#tblBadge").append(data);
+                $("#mdlBadge").modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert("Error occurred");
+            }
+        });
+    }
+</script>
+

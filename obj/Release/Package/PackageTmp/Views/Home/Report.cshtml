@@ -1,0 +1,71 @@
+﻿@model EventManagement.Models.allbadgebyevent
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Download or Email Report</h3>
+            <div class="text-danger">
+                <p>Note: Download report please click on event download link and you will get event excel.</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For email please fill email id or click send button (for multiple email please use ; after an email like (abc@gmail.com;xyz@gmail.com))</p>
+                <p></p>
+            </div>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("EmailExcel", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Event Name</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                                <th>email text</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model?.EventExcelUpload != null)
+                            {
+                                int count = 1;
+                                foreach (var item in Model.EventExcelUpload)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@item.EventName</td>
+                                        <td>@item.EventDate</td>
+                                        <td>
+
+                                            <a href="@Url.Action("DownloadExcelEventYesOnly", "Home", new { Eventid = item.EventId, EventName = item.EventName })" class="btn btn-success">
+                                                <span class="fa fa-download"></span> Download Excel Only Print Report
+                                            </a>
+                                            <div class="clearfix mt-2"></div>
+                                            <a href="@Url.Action("DownloadExcelEvent", "Home", new { Eventid = item.EventId, EventName = item.EventName })" class="btn btn-success">
+                                                <span class="fa fa-download"></span> Download Excel All Record
+                                            </a>
+                                        </td>
+                                        <td>
+
+
+                                            <input type="text" name="SendtoEmailId" id="EmailId" class="form-control" placeholder="enter email id (abc@gmail.com;xyz@gmail.com)" />
+                                            <div class="clearfix mt-2"></div>
+                                            <input type="hidden" name="EventId" value="@item.EventId" />
+                                            <input type="hidden" name="EventName" value="@item.EventName" />
+                                            @*<a href="@Url.Action("EmailExcel", "Home", new { Eventid = item.EventId, EventName = item.EventName, SendtoEmailId=})" class="btn btn-success text-center">
+                                                Email Excel
+                                            </a>*@
+                                            <input type="submit" value="Email Excel" class="btn btn-primary text-center" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                <div class="clearfix mt-2"></div>
+                <br />
+            </div>
+        </section>
+    </div>
+</div>

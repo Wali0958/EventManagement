@@ -1,0 +1,115 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management - Login</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        .password-container {
+            position: relative;
+            /* Adjust width/display as needed for your layout */
+        }
+
+        .form-control {
+            /* Ensure padding-right is sufficient to prevent text overlapping the icon */
+            padding-right: 40px; /* Adjust based on icon size */
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px; /* Adjust distance from the right edge */
+            transform: translateY(-50%); /* Vertically center the icon */
+            cursor: pointer;
+            color: #888; /* Icon color */
+        }
+    </style>
+</head>
+<body style="background-repeat: no-repeat; background-position: inherit; background-image: url('../Content/images/a2.jpg')">
+    <div class="container bg-light">
+        <div class="position-relative mt-lg-5">
+            <div class="row text-center">
+                <h1 id="title">
+                    <img src="~/Content/images/logo.jpeg" height="150px" width="450px" class="mt-3" />
+                    <div class="clearfix mt-2"></div>
+                    Namaste India Exhibitions Services
+                </h1>
+            </div>
+            <hr />
+            <div class="row text-center">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6 text-center">
+                    @using (Html.BeginForm("LoginCode", "Home", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken();
+                        @Html.ValidationSummary(true);
+                        <h2>Please fill details for login</h2>
+                        <div class="clearfix mt-2"></div>
+                        <input type="text" class="form-control form-control-lg " name="UserName" 
+                               placeholder="Email-Id" maxlength="70" required="required" />
+                        <br />
+                        <div class="password-container">
+                            <input class="form-control form-control-lg" id="txtpassword" placeholder="Password" name="Pass" required="required"
+                                   maxlength="15" type="password" />
+                            <span class="password-toggle-icon" id="togglePassword">
+                                <i class="fa fa-eye"></i>
+                            </span>
+                        </div>
+
+                        <br />
+                        <input type="submit" class="btn btn-success btn-lg" value="Login" />
+                        <div class="clearfix mt-1"></div>
+                        <p class="text-danger">* Password is case sensitive.</p>
+                        <div class="clearfix mt-2"></div>
+                    }
+                </div>
+
+                <div class="col-md-3">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" id="mdlmsg" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color:#F1F1F1">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b>Alert</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (@TempData["Msg"] != null)
+                    {
+                        <p><strong>@TempData["Msg"]</strong></p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script>
+  $(document).ready(function () {
+      if ('@TempData["Msg"]' !== "") {
+          $("#mdlmsg").modal('show');
+      }
+  });
+    </script>
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('txtpassword');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            // Toggle the icon class
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+</html>

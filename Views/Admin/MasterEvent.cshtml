@@ -1,0 +1,174 @@
+﻿@model  List<EventManagement.Models.EventModelsList>
+@{
+    ViewBag.Title = "MasterEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Int16 mHeight = 0, mWidth = 0;
+}
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Add-New Event (Only For Admin)</h3>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("MasterEvent", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-6 p-2">
+                            <div class="clearfix mt-1"></div>
+                            <div id="divEventName">
+                                <label>Event Name *</label>
+                                <input type="text" id="EventName" tabindex="1" name="EventName" maxlength="75" placeholder="Please fill Event Name"
+                                       class="form-control" />
+                            </div>
+                            <div class="clearfix mt-1"></div>
+                            <div id="divEventStartOn">
+                                <label>Event Start On *</label>
+                                <input type="date" id="EventStartOn" tabindex="3" name="EventStartOn" maxlength="10" placeholder="Please fill Event Start On" class="form-control Mobile" />
+                            </div>
+                            <div class="clearfix mt-1"></div>
+                            <div id="divEventHeadName">
+                                <label>Event Head Name *</label>
+                                <input type="text" id="EventHeadName" tabindex="5" name="EventHeadName" maxlength="75" placeholder="Please fill EventHeadName" class="form-control alphanumericOnly" />
+                            </div>
+                            <div class="clearfix mt-1"></div>
+                            <div id="divEventPhoto">
+                                <label>Event Badge Photo *</label>
+                                <input type="file" id="EventBadgePhoto" tabindex="7" name="EventBadgePhoto" class="form-control" />
+                            </div>
+                            <div class="clearfix mt-1"></div>
+
+                            <div id="divwidth">
+                                <label>Set Print Type *</label>
+                                <select id="ddlPrinttype" tabindex="9" name="PrintType" class="form-control">
+                                    <option value="1" selected>Single</option>
+                                    <option value="2">Dual</option>
+                                    <option value="3">Certificate</option>
+                                    <option value="4">Letter</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div class="clearfix mt-1"></div>
+                            <div id="divEventLocation">
+                                <label>Event Location *</label>
+                                <input type="text" id="EventLocation" name="EventLocation" tabindex="2" maxlength="70" placeholder="Please Event Location" class="form-control" />
+                            </div>
+
+                            <div class="clearfix mt-1"></div>
+                            <div id="divEventEndOn">
+                                <label>Event End On *</label>
+                                <input type="date" id="EventEndOn" tabindex="4" name="EventEndOn" maxlength="10" placeholder="Please fill Event End On" class="form-control Mobile" />
+                            </div>
+                            <div class="clearfix mt-1"></div>
+                            <div id="divContactNo">
+                                <label>Contact No *</label>
+                                <input type="text" id="ContactNo" tabindex="6" name="ContactNo" maxlength="10" placeholder="Please fill ContactNo"
+                                       class="form-control Mobile" />
+                            </div>
+                            <div class="clearfix mt-1"></div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div id="divheight">
+                                        <label>Set Badge Height *</label>
+                                        <input type="text" id="BadgeHeight" tabindex="8" name="BadgeHeight" maxlength="6" placeholder="Please fill Badge Height"
+                                               class="form-control" />
+                                        <p class="text-danger">Please enter badge height in inchs</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div id="divwidth">
+                                        <label>Set Badge Width *</label>
+                                        <input type="text" id="BadgeWidth" tabindex="9" name="BadgeWidth" maxlength="6" placeholder="Please fill Badge Width"
+                                               class="form-control" />
+                                        <p class="text-danger">Please enter badge Width in inchs</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="clearfix mt-1"></div>
+                        <div class="text-center mt-4">
+                            <input type="submit" value="Submit" id="sub" tabindex="7" class="btn btn-success btn-lg" />
+                        </div>
+                    </div>
+                }
+                <div class="clearfix mt-3"></div>
+                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Event Name</th>
+                            <th>Location</th>
+                            <th>Start On</th>
+                            <th>End On</th>
+                            <th>Total Day</th>
+                            <th>Head Name</th>
+                            <th>Contact No</th>
+                            <th>Badge Photo</th>
+                            <th>Height/Width</th>
+                            <th>Is Acitve</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            Int16 Count = 1;
+                            foreach (EventManagement.Models.EventModelsList item in Model)
+                            {
+                                DateTime mon = Convert.ToDateTime(@item.EventStartOn);
+                                string fmon = mon.ToString("dd/MMM/yyyy");
+                                DateTime mendon = Convert.ToDateTime(@item.EventEndOn);
+                                string fmendon = mendon.ToString("dd/MMM/yyyy");
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@item.EventName</td>
+                                    <td>@item.EventLocation</td>
+                                    <td>@fmon</td>
+                                    <td>@fmendon</td>
+                                    <td>@item.EventDay</td>
+                                    <td>@item.EventHeadName</td>
+                                    <td>@item.ContactNo</td>
+                                    <td><img height="100" width="100" src="~/Content/EventBadge/@item.EventBadgePhoto" /></td>
+                                    <td>
+                                        @item.BadgeHeight pixel /@item.BadgeWidth pixel
+                                    </td>
+                                    <td>
+                                        @if (@item.IsActive == true)
+                                        {
+                                            string m = "Active";
+                                            @m
+                                        }
+                                        else
+                                        {
+                                            string md = "Deactive";
+                                            @md
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (@item.IsActive == true)
+                                        {
+                                            @Html.ActionLink("Deactive", "DeactiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-warning" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Active", "ActiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-success" })
+                                        }
+                                        <div class="clearfix mt-1"></div>
+                                        @Html.ActionLink("Delete", "DeleteEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-danger" })
+
+                                    </td>
+
+                                </tr>
+                                Count++;
+                            }
+                        }
+                    </tbody>
+                </table>
+                <br />
+            </div>
+        </section>
+    </div>
+</div>
+
+

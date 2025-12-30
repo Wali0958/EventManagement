@@ -1,0 +1,162 @@
+﻿@model EventManagement.Models.MasterUser
+
+@{
+    ViewBag.Title = "AddMasterUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container bg-light">
+    <div class="m-3">
+        <section class="row">
+            <h3 class="p-1">Add/View User (Event wise)</h3>
+            <div class="col-12 m-2">
+                @using (Html.BeginForm("AddMasterUser", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-6 p-2">
+                            <div id="divEvent">
+                                <label>Select Event</label>
+                                <select id="ddlEventId" name="EventId" class="form-select" tabindex="1">
+                                    @if (Model?.EventDrop != null)
+                                    {
+                                        foreach (var item in Model.EventDrop)
+                                        {
+                                            <option value="@item.EventId">@item.EventName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="clearfix mt-2"></div>
+                            <div id="divEmail">
+                                <label>UserName/Email</label>
+                                <input type="email" id="UserEmail" name="UserEmail" tabindex="2" maxlength="75" required="required"
+                                       placeholder="Please fill email" class="form-control emailOnly" />
+                            </div>
+                            <div class="clearfix mt-2"></div>
+                        </div>
+                        <div class="col-6 p-2">
+                            <div id="divrole">
+                                <label>Select Role</label>
+                                <select id="UserRole" name="UserRole" class="form-select" tabindex="1">
+                                    @if (Model?.URole != null)
+                                    {
+                                        foreach (var item in Model.URole)
+                                        {
+                                            <option value="@item.UserRole">@item.RoleType</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="clearfix mt-2"></div>
+                            <div id="divPassword">
+                                <label>Password</label>
+                                <input type="text" id="Password" name="Password" tabindex="2" maxlength="15" required="required"
+                                       placeholder="Please fill Password max length(15)" class="form-control" />
+                            </div>
+                            <div class="clearfix mt-2"></div>
+                        </div>
+                    </div>
+                    <div class="clearfix mt-2"></div>
+                    <div class="text-center">
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                        <input type="submit" value="Reset" class="btn btn-warning" />
+                    </div>
+                }
+                <div class="clearfix mt-2"></div>
+                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Role Type</th>
+                            <th>Event Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.UserDisplay != null)
+                        {
+                            int count = 1;
+                            foreach (var item in Model.UserDisplay)
+                            {
+                                if (item.RoleType == "Admin")
+                                { }
+                                else
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@item.RoleType</td>
+                                        <td>@item.EventName</td>
+                                        <td>@item.UserEmail</td>
+                                        <td>@item.Password</td>
+                                        <td>@(item.IsActive ? "Active" : "Deactive")</td>
+                                        <td>
+                                            @if (@item.RoleType == "Admin")
+                                            { }
+                                            else
+                                            {
+                                                if (item.IsActive)
+                                                {
+                                                    @Html.ActionLink("Deactive", "DeactiveUser", "Admin", new { id = item.LoginId }, new { @class = "btn btn-warning" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink("Active", "ActiveUser", "Admin", new { id = item.LoginId }, new { @class = "btn btn-success" })
+                                                }
+                                                <div class="clearfix mt-1"></div>
+                                                @Html.ActionLink("Delete", "DeleteUser", "Admin", new { id = item.LoginId }, new { @class = "btn btn-danger" })
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                count++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.Mobile').on('keypress', function (e) {
+            // Allow: backspace, delete, tab, escape, enter
+            if ($.inArray(e.keyCode, [8, 9, 27, 13]) !== -1 ||
+                // Allow: Ctrl/cmd+A
+                (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+C
+                (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+V
+                (e.keyCode == 86 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+X
+                (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57))) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+<script>
+    $('.alphanumericOnly').on('input', function () {
+        $(this).val(function (_, val) {
+            return val.replace(/[^a-zA-Z0-9]/g, '');
+        });
+    });
+</script>
+
+<script>
+    $('.varcharOnly').on('input', function () {
+        $(this).val(function (_, val) {
+            return val.replace(/[^a-zA-Z\s]/g, '');
+        });
+    });
+</script>
+

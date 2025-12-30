@@ -1,0 +1,65 @@
+﻿@model EventManagement.Models.BadgePrintVM
+
+<div id="divprint" style="position:relative; width:@(Model.BadgeWidth)px; height:@(Model.BadgeHeight)px;background-size:cover; background-image:url('@Model.BgImage');">
+    @foreach (System.Data.DataRow row in Model.LayoutTable.Rows)
+    {
+        string col = row["columName"].ToString().ToLower();
+        int mt = Convert.ToInt32(row["MarginTop"]);
+        int ml = Convert.ToInt32(row["MarginLeft"]);
+        int fs = Convert.ToInt32(row["FontSize"]);
+        string fn = row["FontName"].ToString();
+        string fw = row["FontWeight"].ToString();
+        int h = Convert.ToInt32(row["TotalHeight"]);
+        int w = Convert.ToInt32(row["TotalWidth"]);
+        bool show = Model.FieldsToPrint.Contains(col, StringComparer.OrdinalIgnoreCase);
+        if (!show)
+        {
+            continue;
+        }
+        <div style="margin-top:@(mt)px;text-align:center;font-size:@(fs)px;font-family:@fn;font-weight:@fw;">
+            @if (col == "photo" && !string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath"
+                     style="width:@(w)px;height:@(h)px;object-fit:cover;" />
+            }
+            else if (col == "barcode")
+            {
+                <img src="@Model.QRPath" style="width:@(w)px;height:@(h)px;" />
+                <div style="font-size:9px;">@Model.QRText</div>
+            }
+            else if (col == "name")
+            { 
+                @Model.Name
+            }
+            else if (col == "company")
+            { 
+                @Model.Company
+            }
+            else if (col == "designation")
+            { 
+                @Model.Designation
+            }
+            else if (col == "category")
+            { 
+                @Model.Category
+            }
+            else if (col == "mobile")
+            { 
+                @Model.Mobile
+            }
+            else if (col == "email")
+            { 
+                @Model.Email
+            }
+            else if (col == "country")
+            { 
+                @Model.Country
+            }
+            else if (col == "remarks")
+            {
+                @Model.Remarks
+            }
+        </div>
+    }
+</div>
+<input type="hidden" id="badgeid" value="@Model.BadgeId" />

@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 1020; /* keeps it above body content */
+        }
+
+        .table thead.sticky-top th {
+            background-color: #fff; /* keep header background solid */
+            box-shadow: 0 2px 2px rgba(0,0,0,.1);
+        }
+    </style>
+
+</head>
+<body class="bg">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <h3 class="text-white">
+            <img src="~/Content/images/logo.jpeg" height="35px" width="250px" class="mt-3" />
+
+            <div class="clearfix"></div>Exhibitions Services
+        </h3>
+        <div class="container">
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between" style="font:0.9rem;">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (Session["UserEmail"] != null)
+                    {
+                        try
+                        {
+                            if (Session["RoleType"].ToString().Trim() == "S")
+                            {
+                                <li> <h6>@Html.ActionLink("Kiosk Search |", "PrintwithKiosk", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li> <h6>@Html.ActionLink("Search Badge or Print |", "MasterSearchBadge", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li> <h6>@Html.ActionLink("Bulk Print Badge |", "Index", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li> <h6>@Html.ActionLink("Add New Badge |", "AddNewBadge", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li> <h6>@Html.ActionLink("Scaning |", "Scanning", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                            }
+                            else if (Session["RoleType"].ToString().Trim() == "GS")
+                            {
+                                <li> <h6>@Html.ActionLink("Scaning |", "Scanning", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                            }
+                            else if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "M")
+                            {
+                                <li> <h6> @Html.ActionLink("Home |", "AdminDashboard", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+
+                                if (Session["RoleType"].ToString().Trim() == "A")
+                                {
+                                    <li> <h6> @Html.ActionLink("Add Event |", "MasterEvent", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
+                                }
+                                <li> <h6> @Html.ActionLink("Add Category |", "MasterEventCategory", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
+                                <li> <h6> @Html.ActionLink("Add User |", "AddMasterUser", "Admin", new { area = "" }, new { @class = "  nav-link text-white" }) </h6></li>
+                                <li> <h6> @Html.ActionLink("Add Columns for Event |", "MasterShowColEvent", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
+                                <li> <h6> @Html.ActionLink("Add Print Setup |", "MasterPrintSetupEvent", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
+
+                                if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "S")
+                                {
+                                    <li><h6> @Html.ActionLink("Upload Excel |", "MasterExcel", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+                                }
+                                <li><h6> @Html.ActionLink("Master Badge |", "MasterBadge", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+                                <li><h6> @Html.ActionLink("Bulk QR Generate |", "BulkQR", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+                                <li><h6> @Html.ActionLink("Kiosk Setting |", "KioskSetting", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+
+                            }
+                            if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "M" || Session["RoleType"].ToString().Trim() == "S")
+                            {
+                                <li> <h6>@Html.ActionLink("Report |", "Report", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                            }
+                            <li><h6>@Html.ActionLink("Log-Out", "LogOut", "Home", new { area = "" }, new { @class = "nav-link text-danger" })</h6></li>
+                        }
+                        catch (Exception ex)
+                        {
+                            Response.RedirectToRoute(new { controller = "Home", action = "Login" });
+                        }
+                    }
+                    else
+                    { Response.RedirectToRoute(new { controller = "Home", action = "Login" }); }
+                </ul>
+            </div>
+
+
+        </div>
+        @if (Session["UserEmail"] != null)
+        {
+            <h6 class="text-white">@Session["UserEmail"].ToString()</h6>
+        }
+        else
+        {
+            Response.RedirectToRoute(new { controller = "Home", action = "Login" });
+        }
+    </nav>
+    <div class="container body-content">
+        @if (Session["RoleType"].ToString().Trim() == "S" || Session["RoleType"].ToString().Trim() == "GS")
+        {
+            <div class="container">
+                <label class="btn btn-success float-end m-1">
+                    <b>  Total Badge Print:-  @ViewBag.TotalBadgePrint</b>
+                </label>
+                <label class="btn btn-warning float-end m-1">
+                    <b>  Total Kit Collected:- @ViewBag.TotalKit</b>
+                </label>
+                <label class="btn btn-primary float-end m-1">
+                    <b>Total Badge:- @ViewBag.TotalBadge</b>
+                </label>
+            </div>
+        }
+        <div class="clearfix mt-2"></div>
+        @RenderBody()
+
+        <footer class="container bg-light p-2 text-center">
+
+            <b><span class="text-danger">prof:- Nadeem 8368352220</span> &copy; @DateTime.Now.Year - IT Harb Solution</b>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <div class="modal" tabindex="-1" id="mdlmsg" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color:#F1F1F1">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b>Alert</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (@TempData["Msg"] != null)
+                    {
+                        <p><strong>@TempData["Msg"]</strong></p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+     $(document).ready(function () {
+         if ('@TempData["Msg"]' !== "") {
+             $("#mdlmsg").modal('show');
+         }
+     });
+    </script>
+    <script>
+        new DataTable('.mtable');
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.Mobile').on('keypress', function (e) {
+                if ($.inArray(e.keyCode, [8, 9, 27, 13]) !== -1 ||
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode == 86 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57))) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+    <script>
+        $('.alphanumericOnly').on('input', function () {
+            $(this).val(function (_, val) {
+                return val.replace(/[^a-zA-Z0-9 ]/g, '');
+            });
+        });
+    </script>
+    <script>
+        $('.varcharOnly').on('input', function () {
+            $(this).val(function (_, val) {
+                return val.replace(/[^a-zA-Z\s ]/g, '');
+            });
+        });
+    </script>
+    <script>
+        $('.decmal').on('input', function () {
+            let value = $(this).val();
+            let newValue = value.replace(/[^0-9. ]/g, '').replace(/(\..*)\./g, '$1');
+            $(this).val(newValue);
+        });
+    </script>
+    <script type="text/javascript">
+        $('#Event').on('change', function () {
+            var RegistrantID = $(this).val();
+            $.post('@Url.Action("GetCategoryByEvent", "Admin")', {
+                "EventId": RegistrantID
+            }, function (data, status) {
+                $("#CategoryId").empty();
+                $("#CategoryId").append(data);
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('input[type=radio][name=IsPrint]').change(mGetBadgeFilter);
+            // Call on Category dropdown change
+            $('#Category').change(mGetBadgeFilter);
+            // Call on Company dropdown change
+            $('#company').change(mGetBadgeFilter);
+        });
+    </script>
+    <script>
+        function mGetBadgeFilter() {
+            var PrintStatus = $('input[type=radio][name=IsPrint]:checked').val();
+            var cate = $("#Category").val();
+            var comp = $("#company").val();
+            $.ajax({
+                url: '/Home/GetBadgeByFilter',
+                type: 'GET',
+                data: { IsPrint: PrintStatus, category: cate, Company: comp },
+                success: function (html) {
+                    $('#tblprint tbody').html(html);
+                    $("#multipleprintbtn").removeClass("d-none");
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                }
+            });
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#BadgeId').on('focus', function () {
+                $(this).select();
+            });
+            $('#BadgeId').focus();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            let typingTimer;
+            const typingDelay = 400; // wait time (ms) after user stops typing
+
+            function searchData() {
+                const search = $("#txtSearch").val().trim();
+
+                if (search === "") {
+                    $('#tbodysearch').html("<tr><td colspan='8' class='text-danger text-center'>Please enter or scan something to search.</td></tr>");
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Home/SearchResult',
+                    type: 'GET',
+                    data: { text: search },
+                    beforeSend: function () {
+                        $('#tbodysearch').html("<tr><td colspan='8' class='text-center text-muted'>Searching...</td></tr>");
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#tbodysearch').html(response.mData);
+                        } else {
+                            $('#tbodysearch').html("<tr><td colspan='8' class='text-danger text-center'>" + response.message + "</td></tr>");
+                        }
+                    },
+                    error: function () {
+                        $('#tbodysearch').html("<tr><td colspan='8' class='text-danger text-center'>An unexpected error occurred.</td></tr>");
+                    }
+                });
+            }
+
+            // 🔹 Trigger search on Enter key (works for QR scan too)
+            $('#txtSearch').on('keypress', function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    searchData();
+                }
+            });
+
+            // 🔹 Trigger search as user types (with small delay)
+            $('#txtSearch').on('keyup', function (e) {
+                clearTimeout(typingTimer);
+                if (e.which !== 13) { // skip Enter, already handled above
+                    typingTimer = setTimeout(searchData, typingDelay);
+                }
+            });
+
+            // 🔹 Manual search button
+            $('#btnsearch').on('click', searchData);
+        });
+    </script>
+    <script>
+            $(document).ready(function () {
+                $('#EventId').on('change', function () {
+                    var selectedValue = $(this).val();
+                    $.ajax({
+                        url: '/Admin/GetColumnsByFilter',
+                        type: 'GET',
+                        data: { EventId: selectedValue },
+                        success: function (html) {
+                            $("#mdiv").removeClass("d-none");
+                            $("#abutt").removeClass("d-none");
+                            $('#tblprint tbody').html(html.partial1);
+                            $('#mprintshowdata').html(html.partial2);
+                            $("#multipleprintbtn").removeClass("d-none");
+                            //$('#mprintshowdata').html(html);
+                        },
+                        error: function (xhr) {
+                            //console.log("check data", html);
+                            console.log("error code", xhr);
+                            $("#mdiv").addClass("d-none");
+                            $("#abutt").addClass("d-none");
+                            alert('An error occurred.');
+                        }
+                    });
+                });
+            });
+        </script>
+    @*<script>
+            $(document).ready(function () {
+
+                function searchData() {
+                    var search = $("#txtSearch").val().trim();
+
+                    $.ajax({
+                        url: '/Home/SearchResult',
+                        type: 'GET',
+                        data: { text: search },
+                        success: function (response) {
+                            if (response.success) {
+                                $('#tbodysearch').html(response.mData);
+                            } else {
+                                $('#tbodysearch').html("<tr><td colspan='8' class='text-danger text-center'>" + response.message + "</td></tr>");
+                            }
+                        },
+                        error: function (xhr) {
+                            console.log("error code", xhr);
+                            alert('An unexpected error occurred.');
+                        }
+                    });
+                }
+
+                // Button click
+                $('#btnsearch').on('click', searchData);
+
+                // Enter key in textbox
+                $('#txtSearch').on('keypress', function (e) {
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        searchData();
+                    }
+                });
+            });
+        </script>*@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const textbox = document.getElementById('BadgeId');
+            if (textbox) {
+                textbox.addEventListener('focus', function () {
+                    this.select(); // selects all text when focused
+                });
+            }
+        });
+    </script>
+</body>
+</html>

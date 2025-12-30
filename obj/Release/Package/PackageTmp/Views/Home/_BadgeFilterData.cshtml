@@ -1,0 +1,235 @@
+﻿@model List<EventManagement.Models.GetPrintBadge>
+
+@{
+    int count = 1;
+}
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td><input type="checkbox" class="row-checkbox" checked="checked" style="pointer-events:none;" value="@item.BadgeId" /></td>
+            <td>@count</td>
+            <td>@item.Category</td>
+            <td>@item.Name <div class="clearfix mt-2"></div>@item.Mobile <div class="clearfix mt-2"></div>@item.Email<div class="clearfix mt-2"></div>@item.Country</td>
+            <td>@item.Designation</td>
+            <td>@item.Company</td>
+            <td>@(item.IsPrint == "YES" ? "Yes" : "No") / @item.PrintOn</td>
+            <td>@(item.KitCollect== "YES" ? "Yes":"No") /@item.CollectOn / @item.CollectBy </td>
+            <td>@item.RecInsTime</td>
+            @*@if (item.IsPrint == "YES")
+                {
+                    <td><input type="submit" value="Re-Print" class="btn btn-warning" onclick="Reprint('@item.BadgeId')" name="Print" /></td>
+                }
+                else
+                {
+                    <td><input type="submit" value="Print" class="btn btn-success" onclick="PrintBadge('@item.BadgeId')" name="Print" /></td>
+                }*@
+        </tr>
+        count++;
+    }
+}
+<script>
+    (function () {
+        const selectAll = document.getElementById('selectAll');
+        if (!selectAll) return;
+
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+
+        selectAll.addEventListener('change', function () {
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                if (!this.checked) {
+                    selectAll.checked = false;
+                } else if (document.querySelectorAll('.row-checkbox:checked').length === checkboxes.length) {
+                    selectAll.checked = true;
+                }
+            });
+        });
+    })();
+</script>
+@*<script>
+       function PrintBadge(badgeId) {
+                $.ajax({
+                    url: '@Url.Action("PrintBadgeBulk", "Home")',
+                    type: 'GET',
+                    data: { BadgeId: badgeId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#divshowpanel').html(response.mData);
+                            setTimeout(function () {
+                                var divContents = $("#divprint").html();
+                                var printWindow = window.open('', '', 'height=600,width=800');
+                                printWindow.document.write('<html><head><title>Print</title>');
+                                printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                                printWindow.document.write('</head><body>');
+                                printWindow.document.write(divContents);
+                                printWindow.document.write('</body></html>');
+                                printWindow.document.close();
+                                printWindow.focus();
+                                printWindow.print();
+                                printWindow.close();
+                                $.ajax({
+                                    url: '@Url.Action("updatebadgeafterprint", "Home")',
+                                    type: 'POST',
+                                    data: { BadgeId: badgeId },
+                                    success: function (updateResponse) {
+                                        if (updateResponse.success) {
+
+                                            window.location.href = '@Url.Action("Index", "Home")';
+                                        } else {
+                                            alert("Oops! Error occurred while updating print status.");
+                                        }
+                                    },
+                                    error: function () {
+                                        alert('An error occurred while updating print status.');
+                                    }
+                                });
+                            }, 500);
+                        } else {
+                            alert(response.message || "Error loading badge.");
+                            window.location.href = '@Url.Action("Index", "Home")';
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while fetching badge.');
+                    }
+                });
+            }
+    </script>*@
+@*<script>
+       function Reprint(BadgeId) {
+            $.ajax({
+                url: '@Url.Action("PrintBadgeBulk", "Home")',
+                type: 'GET',
+                data: { BadgeId: BadgeId },
+                success: function (response) {
+                    if (response.success) {
+                        $('#divshowpanel').html(response.mData);
+                        setTimeout(function () {
+                            var divContents = $("#divprint").html();
+                            var printWindow = window.open('', '', 'height=600,width=800');
+                            printWindow.document.write('<html><head>');
+                            printWindow.document.write('<style>print {.print-page { page-break-after: always; } .print-page:last-child { page-break-after: auto; }}</style>');
+                            printWindow.document.write('</head><body>');
+                            printWindow.document.write(divContents);
+                            printWindow.document.write('</body></html>');
+                            printWindow.document.close();
+                            printWindow.focus();
+                            printWindow.print();
+                            printWindow.close();
+                            $.ajax({
+                                url: '@Url.Action("updatebadgeafterReprint", "Home")',
+                                type: 'POST',
+                                data: { BadgeId: BadgeId },
+                                success: function (updateResponse) {
+                                    if (updateResponse.success) {
+                                        alert('Re-Print successful and status updated.');
+                                        window.location.href = '@Url.Action("Index", "Home")';
+                                    } else {
+                                        alert("Oops! Error occurred while updating print status.");
+                                    }
+                                },
+                                error: function () {
+                                    alert('An error occurred while updating print status.');
+                                }
+                            });
+                        }, 500);
+
+                    }
+                    else {
+                        alert(response.message);
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }
+                },
+                error: function () {
+                    alert('An error occurred');
+                }
+            });
+        }
+    </script>*@
+
+<script>
+    function PrintMultipleRecordAll() {
+
+    var mstatusvalue =  $('input[type=radio][name=IsPrint]:checked').val();   
+    var selectedIds = [];
+    $('.row-checkbox:checked').each(function () {
+        selectedIds.push($(this).val());
+    });
+    var mId = selectedIds;
+    if (selectedIds.length === 0) {
+        alert("Please select at least one badge.");
+        return;
+    }
+    $.ajax({
+        url: '@Url.Action("MultiplePrintBadgeCodeSearch", "Home")',
+        type: 'GET',
+        traditional: true, // IMPORTANT for sending arrays to MVC
+        data: { BadgeId: selectedIds },
+        success: function (response) {
+            if (response.success) {
+                $('#divshowpanel').html(response.mData);
+                setTimeout(function () {
+                    var divContents = $(".print-page").map(function () { return '<div class="print-page">' + $(this).html() + '</div>'; }).get().join('');
+                    var printWindow = window.open('', '', 'height=600,width=800');
+                    printWindow.document.write('<html><head>');
+                    printWindow.document.write(`
+                   <style>
+                      @@media print {
+                         body {
+                             margin: 0;
+                             padding: 0;
+                         }
+                        .print-page {
+                            page-break-after: always;
+                            width: 100%;
+                            box-sizing: border-box;
+                            text-align: center;  /* center text, but not force flex */
+                        }
+                         .print-page:last-child {
+                             page-break-after: auto;
+                         }
+                     }
+                      </style>
+                `);
+                    printWindow.document.write('</head><body>');
+                    printWindow.document.write(divContents);
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                    // update print status
+                    $.ajax({
+                        url: '@Url.Action("updatebadgeafterbulkprintstatus", "Home")',
+                        type: 'POST',
+                        traditional: true, // again for arrays
+                        data: { multiprint: mId, mstatus: mstatusvalue },
+                        success: function (updateResponse) {
+                            if (updateResponse.success) {
+                                alert('Re-Print successful and status updated.');
+                                window.location.href = '@Url.Action("Index", "Home")';
+                            } else {
+                                alert("Oops! Error occurred while updating print status.");
+                            }
+                        },
+                        error: function () {
+                            alert('An error occurred while updating print status.');
+                        }
+                    });
+                }, 500);
+            } else {
+                alert(response.message);
+                window.location.href = '@Url.Action("Index", "Home")';
+            }
+        },
+        error: function () {
+            alert('An error occurred');
+        }
+    });
+}
+</script>

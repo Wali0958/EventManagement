@@ -1,0 +1,634 @@
+﻿@*@model  List<EventManagement.Models.EventSettingCol2>*@
+@model  EventManagement.Models.EventSettingCol2
+
+@if (Model != null)
+{
+    if (Model.ResultSetting != null)
+    {
+        foreach (var item in Model.EventcolumnsDrop)
+        {
+            if (item.Category == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "Category")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control" value="Category" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                            <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                            <td>
+                                <select type="text" class=" form-control" name="FontWeight[]">
+                                    <option>@mFontweight</option>
+                                    <option>Normal</option>
+                                    <option>Bold</option>
+                                    <option>Italic</option>
+                                </select>
+
+                            </td>
+                            <td><input type="text" class=" form-control integer-only" value="@items.Position" max="1" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+            }
+            if (item.RName == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "Name")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control decimal-only" value="Name" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                            <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                            <td>
+                                <select type="text" class=" form-control" name="FontWeight[]">
+                                    <option>@mFontweight</option>
+                                    <option>Normal</option>
+                                    <option>Bold</option>
+                                    <option>Italic</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+            }
+            if (item.Designation == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "Designation")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control decimal-only" value="Designation" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                            <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                            <td>
+                                <select type="text" class=" form-control" name="FontWeight[]">
+                                    <option>@mFontweight</option>
+                                    <option>Normal</option>
+                                    <option>Bold</option>
+                                    <option>Italic</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+            }
+            if (item.Company == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "Company")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control decimal-only" value="Company" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                            <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                            <td>
+                                <select type="text" class=" form-control" name="FontWeight[]">
+                                    <option>@mFontweight</option>
+                                    <option>Normal</option>
+                                    <option>Bold</option>
+                                    <option>Italic</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+            }
+            @*if (item.Mobile == true)
+                {
+                    foreach (var items in Model.ResultSetting)
+                    {
+                        if (items.ColumName == "Mobile")
+                        {
+                            var mFontweight = items.FontWeight;
+                            <tr>
+                                <td><input type="text" class=" form-control decimal-only" value="Mobile" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                                <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                                <td>
+                                    <select type="text" class=" form-control" name="FontWeight[]">
+                                        <option>@mFontweight</option>
+                                        <option>Normal</option>
+                                        <option>Bold</option>
+                                        <option>Italic</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                            </tr>
+                        }
+                    }
+                }
+                if (item.Email == true)
+                {
+                    foreach (var items in Model.ResultSetting)
+                    {
+                        if (items.ColumName == "Email")
+                        {
+                            var mFontweight = items.FontWeight;
+                            <tr>
+                                <td><input type="text" class=" form-control decimal-only" value="Email" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                                <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                                <td>
+                                    <select type="text" class=" form-control" name="FontWeight[]">
+                                        <option>@mFontweight</option>
+                                        <option>Normal</option>
+                                        <option>Bold</option>
+                                        <option>Italic</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                            </tr>
+                        }
+                    }
+                }*@
+            if (item.Country == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "Country")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control decimal-only" value="Country" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                            <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                            <td>
+                                <select type="text" class=" form-control" name="FontWeight[]">
+                                    <option>@mFontweight</option>
+                                    <option>Normal</option>
+                                    <option>Bold</option>
+                                    <option>Italic</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+
+            }
+            @*if (item.IdType == true)
+                {
+                    foreach (var items in Model.ResultSetting)
+                    {
+                        if (items.ColumName == "IdType")
+                        {
+                            var mFontweight = items.FontWeight;
+                            <tr>
+                                <td><input type="text" class=" form-control decimal-only" value="Id type" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                                <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                                <td>
+                                    <select type="text" class=" form-control" name="FontWeight[]">
+                                        <option>@mFontweight</option>
+                                        <option>Normal</option>
+                                        <option>Bold</option>
+                                        <option>Italic</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                            </tr>
+                        }
+                    }
+                }
+                if (item.IdNumber == true)
+                {
+                    foreach (var items in Model.ResultSetting)
+                    {
+                        if (items.ColumName == "IdNumber")
+                        {
+                            var mFontweight = items.FontWeight;
+                            <tr>
+                                <td><input type="text" class=" form-control decimal-only" value="ID Number" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                                <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                                <td>
+                                    <select type="text" class=" form-control" name="FontWeight[]">
+                                        <option>@mFontweight</option>
+                                        <option>Normal</option>
+                                        <option>Bold</option>
+                                        <option>Italic</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                            </tr>
+                        }
+                    }
+                }*@
+            @*if (item.Remarks == true)
+                {
+                    foreach (var items in Model.ResultSetting)
+                    {
+                        if (items.ColumName == "Remarks")
+                        {
+                            var mFontweight = items.FontWeight;
+                            <tr>
+                                <td><input type="text" class=" form-control decimal-only" value="Remarks" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                                <td><input type="text" class=" form-control decimal-only" max="2" value="@items.FontSize" name="FontSize[]" /></td>
+                                <td><input type="text" class=" form-control" value="@items.FontName" name="FontName[]" /></td>
+                                <td>
+                                    <select type="text" class=" form-control" name="FontWeight[]">
+                                        <option>@mFontweight</option>
+                                        <option>Normal</option>
+                                        <option>Bold</option>
+                                        <option>Italic</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                            </tr>
+                        }
+                    }
+                }*@
+            if (item.Photo == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "Photo")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control decimal-only" value="Photo" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.TotalHeight" name="TotalHeight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.TotalWidth" name="TotalWidth[]" /></td>
+                            <td></td>
+                            <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+            }
+            if (item.BarCode == true)
+            {
+                foreach (var items in Model.ResultSetting)
+                {
+                    if (items.ColumName == "BarCode")
+                    {
+                        var mFontweight = items.FontWeight;
+                        <tr>
+                            <td><input type="text" class=" form-control decimal-only" value="BarCode" max="5" name="ColumName[]" /><input type="hidden" value="@items.PrintId" name="PrintId[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginTop" name="MarginTop[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginBottom" name="MarginBottom[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginLeft" name="MarginLeft[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.MarginRight" name="MarginRight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.TotalHeight" name="TotalHeight[]" /></td>
+                            <td><input type="text" class=" form-control decimal-only" max="5" value="@items.TotalWidth" name="TotalWidth[]" /></td>
+                            <td></td>
+                            <td><input type="text" class=" form-control integer-only" max="1" value="@items.Position" name="Position[]" /></td>
+                        </tr>
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        foreach (var item in Model.EventcolumnsDrop)
+        {
+            if (item.Category == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control" value="Category" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only target" value="0" max="5" name="MarginTop[]" id="mtopcat" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                    <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                    <td>
+                        <select type="text" class=" form-control" name="FontWeight[]">
+                            <option>Normal</option>
+                            <option>Bold</option>
+                            <option>Italic</option>
+                        </select>
+
+                    </td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="8" name="Position[]" /></td>
+                </tr>
+            }
+            if (item.RName == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control decimal-only" value="Name" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="150" name="MarginTop[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="2" value="16" name="FontSize[]" /></td>
+                    <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                    <td>
+                        <select type="text" class=" form-control" name="FontWeight[]">
+                            <option>Normal</option>
+                            <option selected>Bold</option>
+                            <option>Italic</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="1" name="Position[]" /></td>
+                </tr>
+            }
+            if (item.Designation == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control decimal-only" value="Designation" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                    <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                    <td>
+                        <select type="text" class=" form-control" name="FontWeight[]">
+                            <option>Normal</option>
+                            <option>Bold</option>
+                            <option>Italic</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="2" name="Position[]" /></td>
+                </tr>
+
+            }
+            if (item.Company == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control decimal-only" value="Company" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                    <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                    <td>
+                        <select type="text" class=" form-control" name="FontWeight[]">
+                            <option>Normal</option>
+                            <option>Bold</option>
+                            <option>Italic</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="3" name="Position[]" /></td>
+                </tr>
+            }
+            @*if (item.Mobile == true)
+                {
+                    <tr>
+                        <td><input type="text" class=" form-control decimal-only" value="Mobile" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                        <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                        <td>
+                            <select type="text" class=" form-control" name="FontWeight[]">
+                                <option>Normal</option>
+                                <option>Bold</option>
+                                <option>Italic</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class=" form-control integer-only" max="1" value="4" name="Position[]" /></td>
+                    </tr>
+                }*@
+            @*if (item.Email == true)
+                {
+                    <tr>
+                        <td><input type="text" class=" form-control decimal-only" value="Email" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                        <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                        <td>
+                            <select type="text" class=" form-control" name="FontWeight[]">
+                                <option>Normal</option>
+                                <option>Bold</option>
+                                <option>Italic</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class=" form-control integer-only" max="1" value="5" name="Position[]" /></td>
+                    </tr>
+                }*@
+
+            if (item.Country == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control decimal-only" value="Country" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                    <td><input type="text" class=" form-control" value="Arial Black" name="FontName[]" /></td>
+                    <td>
+                        <select type="text" class=" form-control" name="FontWeight[]">
+                            <option>Normal</option>
+                            <option>Bold</option>
+                            <option>Italic</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="4" name="Position[]" /></td>
+                </tr>
+            }
+            @*if (item.IdType == true)
+                {
+                    <tr>
+                        <td><input type="text" class=" form-control decimal-only" value="Id type" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                        <td><input type="text" class=" form-control"  value="Arial Black"  name="FontName[]" /></td>
+                        <td>
+                            <select type="text" class=" form-control" name="FontWeight[]">
+                                <option>Normal</option>
+                                <option>Bold</option>
+                                <option>Italic</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class=" form-control integer-only" max="1" value="0" name="Position[]" /></td>
+                    </tr>
+                }
+                if (item.IdNumber == true)
+                {
+                    <tr>
+                        <td><input type="text" class=" form-control decimal-only" value="ID Number" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="5" mame="MarginTop[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                        <td><input type="text" class=" form-control"  value="Arial Black"  name="FontName[]" /></td>
+                        <td>
+                            <select type="text" class=" form-control" name="FontWeight[]">
+                                <option>Normal</option>
+                                <option>Bold</option>
+                                <option>Italic</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class=" form-control integer-only" max="1" value="0" name="Position[]" /></td>
+                    </tr>
+                }*@
+            @*if (item.Remarks == true)
+                {
+                    <tr>
+                        <td><input type="text" class=" form-control decimal-only" value="Remarks" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                        <td><input type="text" class=" form-control decimal-only" max="2" value="14" name="FontSize[]" /></td>
+                        <td><input type="text" class=" form-control"  value="Arial Black"  name="FontName[]" /></td>
+                        <td>
+                            <select type="text" class=" form-control" name="FontWeight[]">
+
+                                <option>Normal</option>
+                                <option>Bold</option>
+                                <option>Italic</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class=" form-control integer-only" max="1" value="0" name="Position[]" /></td>
+                    </tr>
+                }*@
+            if (item.Photo == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control decimal-only" value="Photo" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="150" name="MarginTop[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="70" name="TotalHeight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="70" name="TotalWidth[]" /></td>
+                    <td></td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="1" name="Position[]" /></td>
+                </tr>
+            }
+            if (item.BarCode == true)
+            {
+                <tr>
+                    <td><input type="text" class=" form-control decimal-only" value="BarCode" max="5" name="ColumName[]" /><input type="hidden" value="" name="PrintId[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="5" name="MarginTop[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginBottom[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginLeft[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="0" name="MarginRight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="70" name="TotalHeight[]" /></td>
+                    <td><input type="text" class=" form-control decimal-only" max="5" value="70" name="TotalWidth[]" /></td>
+                    <td></td>
+                    <td><input type="text" class=" form-control integer-only" max="1" value="7" name="Position[]" /></td>
+                </tr>
+            }
+        }
+    }
+}
+
+<script>
+    function formValidation() { // Trigger on button click
+        let isValid = true;
+        $('#tblprint tbody tr').each(function () {
+            let row = $(this);
+            // Validate numeric fields
+            row.find('input[name="MarginTop"], input[name="MarginBottom"], input[name="MarginLeft"], input[name="MarginRight"], input[name="FontSize"], input[name="Position"]').each(function () {
+                let value = $(this).val().trim();
+
+                if (value === "" || isNaN(value)) {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            // Validate text fields
+            row.find('input[name="FontName"]').each(function () {
+                let value = $(this).val().trim();
+                if (value === "") {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            // Validate select dropdown
+            row.find('select[name="FontWeight"]').each(function () {
+                let value = $(this).val().trim();
+                if (value === "") {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+        });
+        if (!isValid) {
+            alert("Please correct the highlighted fields.");
+        } else {
+
+        }
+    }
+</script>
+<script>
+    $(document).on('input', 'input.decimal-only', function () {
+        // Allow only digits and one dot
+        this.value = this.value
+            .replace(/[^0-9.]/g, '')    // Remove non-numeric and non-dot
+            .replace(/(\..*)\./g, '$1'); // Allow only one dot
+    });
+</script>
+<script>
+    $(document).on('input', 'input.integer-only', function () {
+        this.value = this.value.replace(/[^0-9]/g, ''); // Remove anything that's not a digit
+    });
+</script>
+
+
