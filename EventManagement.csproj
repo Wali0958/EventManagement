@@ -202,6 +202,7 @@
     <Content Include="Content\all.min.css" />
     <Content Include="Content\BadgePhoto\Dummybadgephoto.jpg" />
     <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\custom.css" />
     <Content Include="Content\dataTables.dataTables.min.css" />
     <Content Include="Content\images\a1.jpg" />
@@ -214,6 +215,7 @@
     <Content Include="Content\images\nadeem iconold.PNG" />
     <Content Include="Content\images\nav-bg.jpg" />
     <Content Include="Content\images\ok.png" />
+    <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\Kiosk\14__5968949.jpg" />
     <Content Include="Content\QRCodesScanner\DummyQR.png" />
     <Content Include="Content\Site.css" />
@@ -221,9 +223,13 @@
     <Content Include="Global.asax" />
     <Content Include="Content\excel.xlsx" />
     <Content Include="Scripts\all.min.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\ckeditor.js" />
     <Content Include="Scripts\dataTables.min.js" />
-    <Content Include="Scripts\jquery-3.7.0.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -258,11 +264,16 @@
     <Folder Include="Content\EventBadge\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="webfonts\fa-solid-900.ttf" />
+    <Content Include="webfonts\fa-solid-900.woff2" />
     <None Include="packages.config" />
     <Content Include="Views\Home\PrintwithKiosk.cshtml" />
     <Content Include="Views\Admin\KioskSetting.cshtml" />
     <Content Include="Views\Home\_KioskData.cshtml" />
     <Content Include="Views\Shared\_AddBadge.cshtml" />
+    <Content Include="Views\Admin\MasterShowColEventCertificate.cshtml" />
+    <Content Include="Views\Admin\_PrintSetupColumnsCertificate.cshtml" />
+    <Content Include="Views\Admin\MasterPrintSetupEventCertificate.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

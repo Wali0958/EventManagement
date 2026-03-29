@@ -4,11 +4,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     <style>
         .mdashboard {
-            height: 160px;
-            width: 100%;
-            margin: 1px 1px 1px 1px;
-            padding: 1px 1px 1px 1px;
-            border-radius: 10px;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,.3); /* FIX */
+            box-shadow: 0 8px 20px rgba(0,0,0,.12);
+        }
+
+            .mdashboard:hover {
+                transform: translateY(-4px);
+            }
+
+        .stat-icon {
+            font-size: 40px;
+            opacity: .85;
         }
     </style>
 }
@@ -20,41 +28,45 @@
             <div class="clearfix mt-1"></div>
             <br />
             <div class="col-md-12">
-                <div class="row text-white text-center">
-                    <div class="col-md-3">
-                        <div class="bg-primary mdashboard mt-4">
-                            <div class="mt-4">
-                                <h2>Total Event</h2>
-                                <h2>@Model.TotalEvent</h2>
-                            </div>
+                <div class="row text-white text-center g-3">
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="bg-primary mdashboard">
+                            <i class="fa fa-calendar stat-icon"></i>
+                            <h5 class="mt-2">Total Event</h5>
+                            <h3>@Model.TotalEvent</h3>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="col-md-3 bg-success mdashboard mt-4">
-                            <div class="mt-4">
-                                <h2>Total User</h2>
-                                <h2>@Model.TotalUser</h2>
-                            </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="bg-success mdashboard">
+                            <i class="fa fa-users stat-icon"></i>
+                            <h5 class="mt-2">Total User</h5>
+                            <h3>@Model.TotalUser</h3>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="col-md-3 bg-danger mdashboard mt-4">
-                            <div class="mt-4">
-                                <h2>Total Badge Print</h2> <h2>@Model.TotalBadge</h2>
-                            </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="bg-danger mdashboard">
+                            <i class="fa fa-print stat-icon"></i>
+                            <h5 class="mt-2">Badge Printed</h5>
+                            <h3>@Model.TotalBadge</h3>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="col-md-3 bg-warning mdashboard mt-4">
-                            <div class="mt-4">
-                                <h2>Badge Not Print</h2> <h2>@Model.TotalBadgeNo</h2>
-                            </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="bg-warning text-dark mdashboard">
+                            <i class="fa fa-times-circle stat-icon"></i>
+                            <h5 class="mt-2">Not Printed</h5>
+                            <h3>@Model.TotalBadgeNo</h3>
                         </div>
                     </div>
+
                 </div>
+
                 <div class="clearfix"></div>
-                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
-                    <thead>
+                <table id="tblprint" class="table table-bordered table-hover align-middle table-striped shadow-sm mtable">
+                    <thead class="table-dark">
                         <tr>
                             <th>Sr.No</th>
                             <th>Event Name</th>
@@ -100,8 +112,8 @@
             </div>
             <div class="modal-body">
                 <div class="col-12 m-2" style="overflow:scroll;">
-                    <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
-                        <thead>
+                    <table id="tblprint" class="table table-bordered table-hover align-middle table-striped shadow-sm mtable">
+                        <thead class="table-dark">
                             <tr>
                                 <th>Sr.No</th>
                                 <th>Category</th>

@@ -4,8 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/dataTables.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/custom.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/all.min.css" rel="stylesheet" />
     <style>
         sticky-top {
             position: sticky;
@@ -18,113 +23,156 @@
             box-shadow: 0 2px 2px rgba(0,0,0,.1);
         }
     </style>
-
 </head>
 <body class="bg">
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <h3 class="text-white">
-            <img src="~/Content/images/logo.jpeg" height="35px" width="250px" class="mt-3" />
-
-            <div class="clearfix"></div>Exhibitions Services
-        </h3>
-        <div class="container">
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="~/Content/images/logo.jpeg" height="40" class="me-2" />
+                <span class="fw-bold">Exhibitions Services</span>
+            </a>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between" style="font:0.9rem;">
-                <ul class="navbar-nav flex-grow-1">
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 small btn-sm btn-outline-info">
+
                     @if (Session["UserEmail"] != null)
                     {
                         try
                         {
                             if (Session["RoleType"].ToString().Trim() == "S")
                             {
-                                <li> <h6>@Html.ActionLink("Kiosk Search |", "PrintwithKiosk", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
-                                <li> <h6>@Html.ActionLink("Search Badge or Print |", "MasterSearchBadge", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
-                                <li> <h6>@Html.ActionLink("Bulk Print Badge |", "Index", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
-                                <li> <h6>@Html.ActionLink("Add New Badge |", "AddNewBadge", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
-                                <li> <h6>@Html.ActionLink("Scaning |", "Scanning", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li class="nav-item">@Html.ActionLink("Kiosk Search", "PrintwithKiosk", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Search / Print Badge", "MasterSearchBadge", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Bulk Print Badge", "Index", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Add New Badge", "AddNewBadge", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Scanning", "Scanning", "Home", null, new { @class = "nav-link" })</li>
                             }
                             else if (Session["RoleType"].ToString().Trim() == "GS")
                             {
-                                <li> <h6>@Html.ActionLink("Scaning |", "Scanning", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li class="nav-item">@Html.ActionLink("Scanning", "Scanning", "Home", null, new { @class = "nav-link" })</li>
                             }
                             else if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "M")
                             {
-                                <li> <h6> @Html.ActionLink("Home |", "AdminDashboard", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+                                <li class="nav-item">@Html.ActionLink("Dashboard", "AdminDashboard", "Admin", null, new { @class = "nav-link" })</li>
 
                                 if (Session["RoleType"].ToString().Trim() == "A")
                                 {
-                                    <li> <h6> @Html.ActionLink("Add Event |", "MasterEvent", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
+                                    <li class="nav-item">@Html.ActionLink("Add Event", "MasterEvent", "Admin", null, new { @class = "nav-link" })</li>
                                 }
-                                <li> <h6> @Html.ActionLink("Add Category |", "MasterEventCategory", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
-                                <li> <h6> @Html.ActionLink("Add User |", "AddMasterUser", "Admin", new { area = "" }, new { @class = "  nav-link text-white" }) </h6></li>
-                                <li> <h6> @Html.ActionLink("Add Columns for Event |", "MasterShowColEvent", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
-                                <li> <h6> @Html.ActionLink("Add Print Setup |", "MasterPrintSetupEvent", "Admin", new { area = "" }, new { @class = " nav-link text-white" }) </h6></li>
 
+                                <li class="nav-item">@Html.ActionLink("Category", "MasterEventCategory", "Admin", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Users", "AddMasterUser", "Admin", null, new { @class = "nav-link" })</li>
+
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        Master Columns Add
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Add Columns for Event", "MasterShowColEvent", "Admin", null, new { @class = "dropdown-item" })</li>
+                                        <li>@Html.ActionLink("Add Columns for Certificate", "MasterShowColEventCertificate", "Admin", null, new { @class = "dropdown-item" })</li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        Master Print Setup
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Print Setup Badge", "MasterPrintSetupEvent", "Admin", null, new { @class = "dropdown-item" })</li>
+                                        <li>@Html.ActionLink("Print Setup Certificate", "MasterPrintSetupEventCertificate", "Admin", null, new { @class = "dropdown-item" })</li>
+                                    </ul>
+                                </li>
                                 if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "S")
                                 {
-                                    <li><h6> @Html.ActionLink("Upload Excel |", "MasterExcel", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
+                                    <li class="nav-item">@Html.ActionLink("Upload Excel", "MasterExcel", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
                                 }
-                                <li><h6> @Html.ActionLink("Master Badge |", "MasterBadge", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
-                                <li><h6> @Html.ActionLink("Bulk QR Generate |", "BulkQR", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
-                                <li><h6> @Html.ActionLink("Kiosk Setting |", "KioskSetting", "Admin", new { area = "" }, new { @class = "nav-link text-white" }) </h6></li>
-
+                                <li class="nav-item">@Html.ActionLink("Master Badge", "MasterBadge", "Admin", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Bulk QR", "BulkQR", "Admin", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Kiosk Setting", "KioskSetting", "Admin", null, new { @class = "nav-link" })</li>
                             }
-                            if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "M" || Session["RoleType"].ToString().Trim() == "S")
+                            if (Session["RoleType"].ToString().Trim() == "A" ||
+                                Session["RoleType"].ToString().Trim() == "M" ||
+                                Session["RoleType"].ToString().Trim() == "S")
                             {
-                                <li> <h6>@Html.ActionLink("Report |", "Report", "Home", new { area = "" }, new { @class = "nav-link text-white" })</h6></li>
+                                <li class="nav-item">@Html.ActionLink("Reports", "Report", "Home", null, new { @class = "nav-link" })</li>
                             }
-                            <li><h6>@Html.ActionLink("Log-Out", "LogOut", "Home", new { area = "" }, new { @class = "nav-link text-danger" })</h6></li>
                         }
-                        catch (Exception ex)
+                        catch
                         {
                             Response.RedirectToRoute(new { controller = "Home", action = "Login" });
                         }
                     }
-                    else
-                    { Response.RedirectToRoute(new { controller = "Home", action = "Login" }); }
                 </ul>
+
+                <!-- Right side -->
+                @if (Session["UserEmail"] != null)
+                {
+                    <div class="d-flex align-items-center">
+                        <span class="text-white small me-3">
+                            <i class="fa fa-user"></i> @Session["UserEmail"]
+                        </span>
+                        @Html.ActionLink("Logout", "LogOut", "Home", null, new { @class = "btn btn-sm btn-outline-danger" })
+                    </div>
+                }
             </div>
-
-
         </div>
-        @if (Session["UserEmail"] != null)
-        {
-            <h6 class="text-white">@Session["UserEmail"].ToString()</h6>
-        }
-        else
-        {
-            Response.RedirectToRoute(new { controller = "Home", action = "Login" });
-        }
     </nav>
-    <div class="container body-content">
+    <div class="container-fluid body-content mt-3">
         @if (Session["RoleType"].ToString().Trim() == "S" || Session["RoleType"].ToString().Trim() == "GS")
         {
-            <div class="container">
-                <label class="btn btn-success float-end m-1">
-                    <b>  Total Badge Print:-  @ViewBag.TotalBadgePrint</b>
-                </label>
-                <label class="btn btn-warning float-end m-1">
-                    <b>  Total Kit Collected:- @ViewBag.TotalKit</b>
-                </label>
-                <label class="btn btn-primary float-end m-1">
-                    <b>Total Badge:- @ViewBag.TotalBadge</b>
-                </label>
+            <div class="row g-2 mb-3 text-center">
+                <div class="col-12 col-md-4">
+                    <div class="card border-0 shadow-sm bg-primary text-white">
+                        <div class="card-body p-2">
+                            <i class="fa fa-id-badge fa-2x"></i>
+                            <h6 class="mt-1 mb-0">Total Badge</h6>
+                            <h5>@ViewBag.TotalBadge</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card border-0 shadow-sm bg-warning text-dark">
+                        <div class="card-body p-2">
+                            <i class="fa fa-gift fa-2x"></i>
+                            <h6 class="mt-1 mb-0">Kit Collected</h6>
+                            <h5>@ViewBag.TotalKit</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card border-0 shadow-sm bg-success text-white">
+                        <div class="card-body p-2">
+                            <i class="fa fa-print fa-2x"></i>
+                            <h6 class="mt-1 mb-0">Badge Printed</h6>
+                            <h5>@ViewBag.TotalBadgePrint</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
         }
-        <div class="clearfix mt-2"></div>
         @RenderBody()
-
-        <footer class="container bg-light p-2 text-center">
-
-            <b><span class="text-danger">prof:- Nadeem 8368352220</span> &copy; @DateTime.Now.Year - IT Harb Solution</b>
+        <footer class="mt-4 p-3 text-center bg-light rounded shadow-sm">
+            <small><span class="text-danger fw-bold"><i class="fa fa-phone"></i> Nadeem – 8368352220</span><br />© @DateTime.Now.Year – IT Harb Solution</small>
         </footer>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    @*<script src="~/Scripts/bootstrap.js"></script>*@
+    <script src="~/Scripts/all.min.js"></script>
+    <script src="~/Scripts/dataTables.min.js"></script>
+    @*<script src="https://cdn.ckeditor.com/ckeditor5/41.3.0/classic/ckeditor.js"></script>*@
+    <script src="~/Scripts/ckeditor.js"></script>
+    <script src="~/Scripts/sweetalert2@11.js"></script>
+
+
     <div class="modal" tabindex="-1" id="mdlmsg" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="background-color:#F1F1F1">
@@ -290,32 +338,67 @@
         });
     </script>
     <script>
-            $(document).ready(function () {
-                $('#EventId').on('change', function () {
-                    var selectedValue = $(this).val();
-                    $.ajax({
-                        url: '/Admin/GetColumnsByFilter',
-                        type: 'GET',
-                        data: { EventId: selectedValue },
-                        success: function (html) {
-                            $("#mdiv").removeClass("d-none");
-                            $("#abutt").removeClass("d-none");
-                            $('#tblprint tbody').html(html.partial1);
-                            $('#mprintshowdata').html(html.partial2);
-                            $("#multipleprintbtn").removeClass("d-none");
-                            //$('#mprintshowdata').html(html);
-                        },
-                        error: function (xhr) {
-                            //console.log("check data", html);
-                            console.log("error code", xhr);
-                            $("#mdiv").addClass("d-none");
-                            $("#abutt").addClass("d-none");
-                            alert('An error occurred.');
-                        }
-                    });
+        $(document).ready(function () {
+            $('#EventId').on('change', function () {
+                var selectedValue = $(this).val();
+                $.ajax({
+                    url: '/Admin/GetColumnsByFilter',
+                    type: 'GET',
+                    data: { EventId: selectedValue },
+                    success: function (html) {
+                        $("#mdiv").removeClass("d-none");
+                        $("#abutt").removeClass("d-none");
+                        $('#tblprint tbody').html(html.partial1);
+                        $('#mprintshowdata').html(html.partial2);
+                        $("#multipleprintbtn").removeClass("d-none");
+                        //$('#mprintshowdata').html(html);
+                    },
+                    error: function (xhr) {
+                        //console.log("check data", html);
+                        console.log("error code", xhr);
+                        $("#mdiv").addClass("d-none");
+                        $("#abutt").addClass("d-none");
+                        alert('An error occurred.');
+                    }
                 });
             });
-        </script>
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#EventIdCertificate').on('change', function () {
+                var selectedValue = $(this).val();
+                $.ajax({
+                    url: '/Admin/GetColumnsByFilterCertificate',
+                    type: 'GET',
+                    data: { EventId: selectedValue },
+                    success: function (html) {
+                        $("#mdiv").removeClass("d-none");
+                        $("#abutt").removeClass("d-none");
+                        $('#tblprint tbody').html(html.partial1);
+                        $('#mprintshowdata').html(html.partial2);
+                        $("#multipleprintbtn").removeClass("d-none");
+                        //$('#mprintshowdata').html(html);
+                    },
+                    error: function (xhr) {
+                        //console.log("check data", html);
+                        console.log("error code", xhr);
+                        $("#mdiv").addClass("d-none");
+                        $("#abutt").addClass("d-none");
+                        alert('An error occurred.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
+
+
+
     @*<script>
             $(document).ready(function () {
 
@@ -360,6 +443,33 @@
                     this.select(); // selects all text when focused
                 });
             }
+        });
+    </script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#ckeditor'), {
+                toolbar: [
+                    'bold', 'italic', 'underline',
+                    '|',
+                    'numberedList', 'bulletedList',
+                    '|',
+                    'link',
+                    '|',
+                    'undo', 'redo',
+                    'height', '180'
+                ]
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true
+            });
         });
     </script>
 </body>

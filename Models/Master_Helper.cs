@@ -98,7 +98,7 @@ namespace EventManagement.Models
                 cmd.Parameters.AddWithValue("@pEventBadgePhoto", Event.EventBadgePhoto);
                 cmd.Parameters.AddWithValue("@pBadgeHeight", Event.BadgeHeight);
                 cmd.Parameters.AddWithValue("@pBadgeWidth", Event.BadgeWidth);
-                cmd.Parameters.AddWithValue("@pPrintType", Event.PrintType);
+                cmd.Parameters.AddWithValue("@pPrintType", Event.PrintTypeValue);
                 cmd.Parameters.AddWithValue("@pIsActive", Event.IsActive);
                 cmd.Parameters.AddWithValue("@pLoginId", LoginId);
                 cmd.Parameters.AddWithValue("@pLoginIP", HttpContext.Current.Request.UserHostAddress);
@@ -217,6 +217,7 @@ namespace EventManagement.Models
                 cmd.Parameters.AddWithValue("@pRemarks", mEColumn.Remarks);
                 cmd.Parameters.AddWithValue("@pLoginId", LoginId);
                 cmd.Parameters.AddWithValue("@pLoginIP", HttpContext.Current.Request.UserHostAddress);
+                cmd.Parameters.AddWithValue("@mType", mEColumn.mType);
                 adp = new SqlDataAdapter(cmd);
                 adp.Fill(ds);
                 return ds;
@@ -379,6 +380,36 @@ namespace EventManagement.Models
                 {
                     cmd.Parameters.AddWithValue("@pTbl4Excel", CommonFunctions.ToDataTable(Exx.mExcelUploadListcolumns));
                 }
+                adp = new SqlDataAdapter(cmd);
+                adp.Fill(ds);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                    con.Dispose();
+                }
+            }
+        }
+        public DataSet FetchEmailContnet(string Action, MailContnet Exx)
+        {
+            DataSet ds = new DataSet();
+            SqlConnection con = new SqlConnection(con_str);
+            con.Open();
+            try
+            {
+                cmd = new SqlCommand("usp_EventExcelBadgeReport", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@pAction", Action);
+                cmd.Parameters.AddWithValue("@pEventId", Exx.EventId);
+                cmd.Parameters.AddWithValue("@pIsActive", Exx.IsActive);
+                cmd.Parameters.AddWithValue("@pEmailContnet", Exx.MailContent);               
                 adp = new SqlDataAdapter(cmd);
                 adp.Fill(ds);
                 return ds;

@@ -5,170 +5,395 @@
 
     Int16 mHeight = 0, mWidth = 0;
 }
-<div class="container bg-light">
+<div class="container">
     <div class="m-3">
         <section class="row">
-            <h3 class="p-1">Add-New Event (Only For Admin)</h3>
             <div class="col-12 m-2">
                 @using (Html.BeginForm("MasterEvent", "Admin", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
                 {
-                    <div class="row">
-                        <div class="col-6 p-2">
-                            <div class="clearfix mt-1"></div>
-                            <div id="divEventName">
-                                <label>Event Name *</label>
-                                <input type="text" id="EventName" tabindex="1" name="EventName" maxlength="75" placeholder="Please fill Event Name"
-                                       class="form-control" />
-                            </div>
-                            <div class="clearfix mt-1"></div>
-                            <div id="divEventStartOn">
-                                <label>Event Start On *</label>
-                                <input type="date" id="EventStartOn" tabindex="3" name="EventStartOn" maxlength="10" placeholder="Please fill Event Start On" class="form-control Mobile" />
-                            </div>
-                            <div class="clearfix mt-1"></div>
-                            <div id="divEventHeadName">
-                                <label>Event Head Name *</label>
-                                <input type="text" id="EventHeadName" tabindex="5" name="EventHeadName" maxlength="75" placeholder="Please fill EventHeadName" class="form-control alphanumericOnly" />
-                            </div>
-                            <div class="clearfix mt-1"></div>
-                            <div id="divEventPhoto">
-                                <label>Event Badge Photo *</label>
-                                <input type="file" id="EventBadgePhoto" tabindex="7" name="EventBadgePhoto" class="form-control" />
-                            </div>
-                            <div class="clearfix mt-1"></div>
-
-                            <div id="divwidth">
-                                <label>Set Print Type *</label>
-                                <select id="ddlPrinttype" tabindex="9" name="PrintType" class="form-control">
-                                    <option value="1" selected>Single</option>
-                                    <option value="2">Dual</option>
-                                    <option value="3">Certificate</option>
-                                    <option value="4">Letter</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-6 p-2">
-                            <div class="clearfix mt-1"></div>
-                            <div id="divEventLocation">
-                                <label>Event Location *</label>
-                                <input type="text" id="EventLocation" name="EventLocation" tabindex="2" maxlength="70" placeholder="Please Event Location" class="form-control" />
-                            </div>
-
-                            <div class="clearfix mt-1"></div>
-                            <div id="divEventEndOn">
-                                <label>Event End On *</label>
-                                <input type="date" id="EventEndOn" tabindex="4" name="EventEndOn" maxlength="10" placeholder="Please fill Event End On" class="form-control Mobile" />
-                            </div>
-                            <div class="clearfix mt-1"></div>
-                            <div id="divContactNo">
-                                <label>Contact No *</label>
-                                <input type="text" id="ContactNo" tabindex="6" name="ContactNo" maxlength="10" placeholder="Please fill ContactNo"
-                                       class="form-control Mobile" />
-                            </div>
-                            <div class="clearfix mt-1"></div>
+                    <div class="page-card">
+                        <h5 class="form-section-title">
+                            <i class="fa fa-calendar-plus"></i> Add-New Event (Only For Admin)
+                        </h5>
+                        <div class="form-card">
                             <div class="row">
-                                <div class="col-6">
-                                    <div id="divheight">
-                                        <label>Set Badge Height *</label>
-                                        <input type="text" id="BadgeHeight" tabindex="8" name="BadgeHeight" maxlength="6" placeholder="Please fill Badge Height"
+
+                                <!-- LEFT COLUMN -->
+                                <div class="col-12 col-md-6 p-2">
+
+                                    <div id="divEventName" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-calendar"></i> Event Name *
+                                        </label>
+                                        <input type="text" id="EventName" tabindex="1" name="EventName"
+                                               maxlength="75" placeholder="Please fill Event Name"
                                                class="form-control" />
-                                        <p class="text-danger">Please enter badge height in inchs</p>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div id="divwidth">
-                                        <label>Set Badge Width *</label>
-                                        <input type="text" id="BadgeWidth" tabindex="9" name="BadgeWidth" maxlength="6" placeholder="Please fill Badge Width"
-                                               class="form-control" />
-                                        <p class="text-danger">Please enter badge Width in inchs</p>
+
+                                    <div id="divEventStartOn" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-play-circle"></i> Event Start On *
+                                        </label>
+                                        <input type="text" id="EventStartOn" tabindex="3" name="EventStartOn"
+                                               class="form-control Mobile datepicker" />
+                                    </div>
+
+                                    <div id="divEventHeadName" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-user"></i> Event Head Name *
+                                        </label>
+                                        <input type="text" id="EventHeadName" tabindex="5" name="EventHeadName"
+                                               maxlength="75" placeholder="Please fill Event Head Name"
+                                               class="form-control alphanumericOnly" />
+                                    </div>
+
+                                    <div id="divEventPhoto" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-image"></i> Event Badge Photo *
+                                        </label>
+                                        <input type="file" id="EventBadgePhoto" tabindex="7"
+                                               name="EventBadgePhoto" class="form-control" />
+                                    </div>
+
+                                    <!-- PRINT TYPE -->
+                                    <div id="divwidth" class="print-type-box mb-3">
+                                        <label class="fw-bold mb-2">
+                                            <i class="fa fa-print"></i> Set Print Type *
+                                        </label>
+
+                                        <div class="row">                                           
+                                            <div class="col-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="PrintType" value="2" id="ptDual">
+                                                    <label class="form-check-label" for="ptDual">Dual</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="PrintType" value="3" id="ptCertificate">
+                                                    <label class="form-check-label" for="ptCertificate">Certificate</label>
+                                                </div>
+                                                @*<div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PrintType" value="4" id="ptLetter">
+                                                        <label class="form-check-label" for="ptLetter">Letter</label>
+                                                    </div>*@
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
+                                <!-- RIGHT COLUMN -->
+                                <div class="col-12 col-md-6 p-2">
+
+                                    <div id="divEventLocation" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-map-marker"></i> Event Location *
+                                        </label>
+                                        <input type="text" id="EventLocation" name="EventLocation"
+                                               tabindex="2" maxlength="70"
+                                               placeholder="Please fill Event Location"
+                                               class="form-control" />
+                                    </div>
+
+                                    <div id="divEventEndOn" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-stop-circle"></i> Event End On *
+                                        </label>
+                                        <input type="text" id="EventEndOn" tabindex="4" name="EventEndOn" class="form-control Mobile    datepicker" />
+                                    </div>
+
+                                    <div id="divContactNo" class="form-group-box mb-3">
+                                        <label>
+                                            <i class="fa fa-phone"></i> Contact No *
+                                        </label>
+                                        <input type="text" id="ContactNo" tabindex="6"
+                                               name="ContactNo" maxlength="10"
+                                               placeholder="Please fill Contact No"
+                                               class="form-control Mobile" />
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div id="divheight" class="form-group-box mb-3">
+                                                <label>
+                                                    <i class="fa fa-arrows-v"></i> Badge Height *
+                                                </label>
+                                                <input type="text" id="BadgeHeight" tabindex="8"
+                                                       name="BadgeHeight" maxlength="6"
+                                                       placeholder="Badge Height"
+                                                       class="form-control" />
+                                                <small class="text-danger">Height in inches</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <div id="divwidth" class="form-group-box mb-3">
+                                                <label>
+                                                    <i class="fa fa-arrows-h"></i> Badge Width *
+                                                </label>
+                                                <input type="text" id="BadgeWidth" tabindex="9"
+                                                       name="BadgeWidth" maxlength="6"
+                                                       placeholder="Badge Width"
+                                                       class="form-control" />
+                                                <small class="text-danger">Width in inches</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row d-none" id="divcertificate">
+                                        <div class="col-6">
+                                            <div id="divheight" class="form-group-box mb-3">
+                                                <label>
+                                                    <i class="fa fa-arrows-v"></i> Certificate Height *
+                                                </label>
+                                                <input type="text" id="CertificateHeight" tabindex="8"
+                                                       name="CertificateHeight" maxlength="6"
+                                                       placeholder="Badge Height"
+                                                       class="form-control" />
+                                                <small class="text-danger">Height in inches</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <div id="divwidth" class="form-group-box mb-3">
+                                                <label>
+                                                    <i class="fa fa-arrows-h"></i> Certificate Width *
+                                                </label>
+                                                <input type="text" id="CertificateWidth" tabindex="9"
+                                                       name="CertificateWidth" maxlength="6"
+                                                       placeholder="Badge Width"
+                                                       class="form-control" />
+                                                <small class="text-danger">Width in inches</small>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix mt-2"></div>
+                                        <div id="divCertificatePhoto" class="form-group-box mb-3">
+                                            <label>
+                                                <i class="fa fa-image"></i> Certificate Photo *
+                                            </label>
+                                            <input type="file" id="EventCertificatePhoto" tabindex="7"
+                                                   name="EventCertificatePhoto" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- SUBMIT -->
+                                <div class="col-12 text-center mt-4">
+                                    <input type="submit" value="Submit"
+                                           id="sub" tabindex="7"
+                                           class="btn btn-success btn-lg px-5 shadow">
+                                </div>
+
                             </div>
-                        </div>
-                        <div class="clearfix mt-1"></div>
-                        <div class="text-center mt-4">
-                            <input type="submit" value="Submit" id="sub" tabindex="7" class="btn btn-success btn-lg" />
                         </div>
                     </div>
                 }
                 <div class="clearfix mt-3"></div>
-                <table id="tblprint" class="table table-responsive table-success table-hover table-bordered mtable">
-                    <thead>
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Event Name</th>
-                            <th>Location</th>
-                            <th>Start On</th>
-                            <th>End On</th>
-                            <th>Total Day</th>
-                            <th>Head Name</th>
-                            <th>Contact No</th>
-                            <th>Badge Photo</th>
-                            <th>Height/Width</th>
-                            <th>Is Acitve</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null)
-                        {
-                            Int16 Count = 1;
-                            foreach (EventManagement.Models.EventModelsList item in Model)
+                <div class="page-card">
+                    <h5 class="form-section-title">
+                        <i class="fa fa-calendar-plus"></i> Event Information
+                    </h5>
+                    <table id="tblprint" class="table table-hover mtable table-responsive border rounded shadow-sm mt-4">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Event Name</th>
+                                <th>Location</th>
+                                <th>Start On</th>
+                                <th>End On</th>
+                                <th>Total Day</th>
+                                <th>Head Name</th>
+                                <th>Contact No</th>
+                                <th>Badge Photo</th>
+                                <th>Height/Width</th>
+                                <th>Is Acitve</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
                             {
-                                DateTime mon = Convert.ToDateTime(@item.EventStartOn);
-                                string fmon = mon.ToString("dd/MMM/yyyy");
-                                DateTime mendon = Convert.ToDateTime(@item.EventEndOn);
-                                string fmendon = mendon.ToString("dd/MMM/yyyy");
-                                <tr>
-                                    <td>@Count</td>
-                                    <td>@item.EventName</td>
-                                    <td>@item.EventLocation</td>
-                                    <td>@fmon</td>
-                                    <td>@fmendon</td>
-                                    <td>@item.EventDay</td>
-                                    <td>@item.EventHeadName</td>
-                                    <td>@item.ContactNo</td>
-                                    <td><img height="100" width="100" src="~/Content/EventBadge/@item.EventBadgePhoto" /></td>
-                                    <td>
-                                        @item.BadgeHeight pixel /@item.BadgeWidth pixel
-                                    </td>
-                                    <td>
-                                        @if (@item.IsActive == true)
-                                        {
-                                            string m = "Active";
-                                            @m
-                                        }
-                                        else
-                                        {
-                                            string md = "Deactive";
-                                            @md
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (@item.IsActive == true)
-                                        {
-                                            @Html.ActionLink("Deactive", "DeactiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-warning" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("Active", "ActiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-success" })
-                                        }
-                                        <div class="clearfix mt-1"></div>
-                                        @Html.ActionLink("Delete", "DeleteEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-danger" })
-
-                                    </td>
-
-                                </tr>
-                                Count++;
+                                Int16 Count = 1;
+                                foreach (EventManagement.Models.EventModelsList item in Model)
+                                {
+                                    DateTime mon = Convert.ToDateTime(@item.EventStartOn);
+                                    string fmon = mon.ToString("dd/MMM/yyyy");
+                                    DateTime mendon = Convert.ToDateTime(@item.EventEndOn);
+                                    string fmendon = mendon.ToString("dd/MMM/yyyy");
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>@item.EventName</td>
+                                        <td>@item.EventLocation</td>
+                                        <td>@fmon</td>
+                                        <td>@fmendon</td>
+                                        <td>@item.EventDay</td>
+                                        <td>@item.EventHeadName</td>
+                                        <td>@item.ContactNo</td>
+                                        <td><img height="100" width="100" src="~/Content/EventBadge/@item.EventBadgePhoto" /></td>
+                                        <td>
+                                            @item.BadgeHeight pixel /@item.BadgeWidth pixel
+                                        </td>
+                                        <td>
+                                            @if (@item.IsActive == true)
+                                            {
+                                                string m = "Active";
+                                                @m
+                                            }
+                                            else
+                                            {
+                                                string md = "Deactive";
+                                                @md
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item.IsActive == true)
+                                            {
+                                                @Html.ActionLink("Deactive", "DeactiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-warning" })
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Active", "ActiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-success" })
+                                            }
+                                            <div class="clearfix mt-1"></div>
+                                            @Html.ActionLink("Delete", "DeleteEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-danger" })
+                                        </td>
+                                    </tr>
+                                    Count++;
+                                }
                             }
-                        }
-                    </tbody>
-                </table>
-                <br />
+                        </tbody>
+                    </table>
+                    <br />
+                </div>
             </div>
         </section>
     </div>
 </div>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $("#sub").click(function (e) {
+
+            let isValid = true;
+            let msg = "";
+
+            // Event Name
+            if ($("#EventName").val().trim() === "") {
+                msg = "Please enter Event Name";
+                isValid = false;
+            }
+
+            // Location
+            else if ($("#EventLocation").val().trim() === "") {
+                msg = "Please enter Event Location";
+                isValid = false;
+            }
+
+            // Start Date
+            else if ($("#EventStartOn").val().trim() === "") {
+                msg = "Please select Event Start Date";
+                isValid = false;
+            }
+
+            // End Date
+            else if ($("#EventEndOn").val().trim() === "") {
+                msg = "Please select Event End Date";
+                isValid = false;
+            }
+
+            // Date logic
+            else {
+                let start = $("#EventStartOn").val();
+                let end = $("#EventEndOn").val();
+
+                let startDate = new Date(start);
+                let endDate = new Date(end);
+
+                if (startDate > endDate) {
+                    msg = "Start date cannot be greater than End date";
+                    isValid = false;
+                }
+            }
+
+            // Head Name
+            if (isValid && $("#EventHeadName").val().trim() === "") {
+                msg = "Please enter Event Head Name";
+                isValid = false;
+            }
+
+            // Contact No
+            if (isValid) {
+                let mobile = $("#ContactNo").val().trim();
+                let mobilePattern = /^[6-9]\d{9}$/;
+
+                if (!mobilePattern.test(mobile)) {
+                    msg = "Enter valid 10 digit mobile number";
+                    isValid = false;
+                }
+            }
+
+            // Badge Height
+            if (isValid && $("#BadgeHeight").val().trim() === "") {
+                msg = "Please enter Badge Height";
+                isValid = false;
+            }
+
+            // Badge Width
+            if (isValid && $("#BadgeWidth").val().trim() === "") {
+                msg = "Please enter Badge Width";
+                isValid = false;
+            }
+
+            // File Upload
+            if (isValid && $("#EventBadgePhoto").val() === "") {
+                msg = "Please upload Event Badge Photo";
+                isValid = false;
+            }
+
+            // Print Type (checkbox)
+            if (isValid && $("input[name='PrintType']:checked").length === 0) {
+                msg = "Please select at least one Print Type";
+                isValid = false;
+            }
+
+            // FINAL CHECK
+            $(".form-control").removeClass("is-invalid");
+
+            if (!isValid) {
+                $("#" + $(document.activeElement).attr("id")).addClass("is-invalid");
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: msg
+                });
+                return false;
+            }
+            else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Form submitted successfully!',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+
+        });
+
+    });
+</script>
+<script> 
+    $(document).ready(function () {
+        $('#ptCertificate').change(function () {
+            if ($(this).is(':checked')) {
+                $('#divcertificate').removeClass("d-none");
+            } else {
+                $('#divcertificate').addClass("d-none");
+            }
+        });
+    });
+</script>
 
 

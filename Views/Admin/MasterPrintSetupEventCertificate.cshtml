@@ -2,11 +2,8 @@
 
 @{
     ViewBag.Title = "MasterPrintSetupEvent";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
 }
-
-
 <div class="container">
     <div class="m-3">
         <section class="row">
@@ -16,11 +13,11 @@
                     <div class="row">
                         <div class="col-12 p-2 form-card">
                             <h5 class="form-section-title">
-                                <i class="fa fa-calendar-plus"></i> Master Print Setup
+                                <i class="fa fa-calendar-plus"></i> Master Print Setup Certificate
                             </h5>
                             <div id="divEvent">
                                 <label>Select Event</label>
-                                <select id="EventId" name="EventId" class="form-select" tabindex="1">
+                                <select id="EventIdCertificate" name="EventId" class="form-select" tabindex="1">
                                     @if (Model?.EventDrop != null)
                                     {
                                         <option value="0">--Select--</option>
@@ -67,8 +64,10 @@
                                         </div>
                                     </div>
                                     <div class="clearfix mt-2"></div>
+
                                     <div id="mprintshowdata">
                                     </div>
+
                                     <div class="clearfix mt-2"></div>
                                 </div>
                             </div>
@@ -88,3 +87,4 @@
         </section>
     </div>
 </div>
+

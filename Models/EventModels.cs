@@ -35,8 +35,16 @@ namespace EventManagement.Models
         public string EventBadgePhoto { get; set; }
         public decimal BadgeHeight { get; set; }
         public decimal BadgeWidth { get; set; }
-        public int PrintType { get; set; }
+
+        public List<int> PrintType { get; set; }
+        public string PrintTypeValue { get; set; }
         public bool IsActive { get; set; }
+
+        public string EventCertificatePhoto { get; set; }
+        public decimal CertificateHeight { get; set; }
+        public decimal CertificateWidth { get; set; }
+
+
         public List<EventModelsList> mList { get; set; }
     }
     public class EventModelsList
@@ -52,7 +60,8 @@ namespace EventManagement.Models
         public string EventBadgePhoto { get; set; }
         public decimal BadgeHeight { get; set; }
         public decimal BadgeWidth { get; set; }
-        public int PrintType { get; set; }
+        public List<int> PrintType { get; set; }
+        public string printTypeValue { get; set; }
         public bool IsActive { get; set; }
     }
     public class EventDropdownList
@@ -146,6 +155,7 @@ namespace EventManagement.Models
         public bool BarCode { get; set; }
         public bool IsActive { get; set; }
         public bool Remarks { get; set; }
+        public string mType { get; set; }
 
         public List<EventDropdownList> EventDrop { get; set; }
         public List<EventSettingColumns> EventcolumnsDrop { get; set; }
@@ -270,6 +280,16 @@ namespace EventManagement.Models
         //public string IDType { get; set; }
         //public string IDNumber { get; set; }
     }
+
+    public class MailContnet
+    {
+        public int MailId { get; set; }
+        public int EventId { get; set; }
+        public string MailContent { get; set; }
+        public bool IsActive { get; set; }
+       
+    }
+
     #endregion
     #region master badge delete section
     public class allbadgebyevent

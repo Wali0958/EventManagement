@@ -1,9 +1,143 @@
-﻿.bg {
-    /*background-image: url('images/nadeem icon.PNG');*/
+﻿/* =====================
+   BACKGROUND
+===================== */
+.bg {
     background-image: url('images/a2.jpg');
-    background-repeat:no-repeat;
-    /*background-image: url('images/a2.jpg');*/
-    z-index: 999999999999 !important;
-    opacity: inherit;
-    opacity: 2.0;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* =====================
+   COMMON FORM CARDS
+===================== */
+.form-card,
+.page-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+
+@media (max-width: 768px) {
+    .form-card,
+    .page-card {
+        padding: 15px;
+    }
+}
+
+/* =====================
+   FORM GROUP BOX
+===================== */
+.form-group-box {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+    .form-group-box label {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .form-group-box i {
+        color: #0d6efd;
+        margin-right: 6px;
+    }
+
+/* =====================
+   SECTION TITLE
+===================== */
+.form-section-title {
+    font-weight: 600;
+    border-left: 4px solid #0d6efd;
+    padding-left: 10px;
+    margin-bottom: 15px;
+}
+
+.form-label i {
+    color: #0d6efd;
+}
+
+/* =====================
+   PRINT TYPE BOX
+===================== */
+.print-type-box {
+    border: 1px dashed #adb5bd;
+    border-radius: 12px;
+    padding: 15px;
+    background: #fdfdfd;
+}
+
+    .print-type-box label {
+        cursor: pointer;
+    }
+
+.form-check {
+    margin-bottom: 6px;
+}
+
+/* =====================
+   TABLE STYLES
+===================== */
+.table img {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+/* =====================
+   PASSWORD FIELD
+===================== */
+.password-container {
+    position: relative;
+}
+
+.form-control {
+    padding-right: 40px;
+}
+
+.form-control-lg {
+    padding-right: 45px;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+/* =====================
+   LOGIN PAGE ONLY
+===================== */
+body.login-page {
+    min-height: 100vh;
+    background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), url('../Content/images/a2.jpg') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.login-card {
+    max-width: 420px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.3);
+    padding: 25px;
+}
+
+.login-logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 576px) {
+    .login-card {
+        padding: 20px;
+    }
 }

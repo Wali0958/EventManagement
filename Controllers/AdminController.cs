@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Mvc;
 using static Microsoft.IO.RecyclableMemoryStreamManager;
 using DocumentFormat.OpenXml.Wordprocessing;
+using System.Text.RegularExpressions;
 
 namespace EventManagement.Controllers
 {
@@ -45,6 +46,18 @@ namespace EventManagement.Controllers
         }
         #endregion
         #region Event Code
+
+        string Generate4Char()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Random rnd = new Random();
+            StringBuilder sb = new StringBuilder(6);
+
+            for (int i = 0; i < 6; i++)
+                sb.Append(chars[rnd.Next(chars.Length)]);
+
+            return sb.ToString();
+        }
         // GET: Admin
         public ActionResult MasterEvent()
         {
@@ -80,7 +93,7 @@ namespace EventManagement.Controllers
         }
 
         [HttpPost]
-        public ActionResult MasterEvent(EventModels modal, HttpPostedFileBase EventBadgePhoto)
+        public ActionResult MasterEvent(EventModels modal, HttpPostedFileBase EventBadgePhoto,HttpPostedFileBase EventCertificatePhoto)
         {
             if (modal.EventName.Trim() != "" && modal.EventLocation.Trim() != null && modal.EventEndOn.ToString() != "01-01-2025" && modal.EventStartOn.ToString() != "01-01-2025"
                 && modal.ContactNo.Trim() != "" && modal.EventHeadName.Trim() != "")
@@ -90,6 +103,16 @@ namespace EventManagement.Controllers
                 {
                     try
                     {
+                       
+                        if (modal.PrintType != null && modal.PrintType.Count > 0)
+                        {
+                            modal.PrintTypeValue = string.Join(",", modal.PrintType);
+                        }
+                        else
+                        {
+                            TempData["Msg"] = "Please select at least one Print Type.";
+                            return RedirectToAction("MasterEvent");
+                        }
                         // Optional: Validate file type
                         string[] allowedExtensions = { ".jpg", ".png", ".jpeg" };
                         string fileExtension = Path.GetExtension(EventBadgePhoto.FileName.Trim()).ToLower();
@@ -103,7 +126,7 @@ namespace EventManagement.Controllers
                         if (!Directory.Exists(folderPath))
                             Directory.CreateDirectory(folderPath);
                         // Set the file name and save path
-                        string fileName = Path.GetFileName(DateTime.Now + "_" + modal.EventName + "_" + EventBadgePhoto.FileName);
+                        string fileName = Path.GetFileName(DateTime.Now + "_" + Regex.Replace(modal.EventName, @"\s+", "") + "_" + Generate4Char()+ fileExtension);
                         string fullPath = Path.Combine(folderPath.Trim(), fileName.Trim());
                         // Save the file
                         EventBadgePhoto.SaveAs(fullPath.Trim());
@@ -117,7 +140,48 @@ namespace EventManagement.Controllers
                 }
                 modal.BadgeHeight = (modal.BadgeHeight * 96);
                 modal.BadgeWidth = (modal.BadgeWidth * 96);
-                modal.PrintType = modal.PrintType;
+                if (EventCertificatePhoto != null && EventCertificatePhoto.ContentLength > 0)
+                {
+                    try
+                    {
+
+                        if (modal.PrintType != null && modal.PrintType.Count > 0)
+                        {
+                            modal.PrintTypeValue = string.Join(",", modal.PrintType);
+                        }
+                        else
+                        {
+                            TempData["Msg"] = "Please select at least one Print Type.";
+                            return RedirectToAction("MasterEvent");
+                        }
+                        // Optional: Validate file type
+                        string[] allowedExtensions = { ".jpg", ".png", ".jpeg" };
+                        string fileExtension = Path.GetExtension(EventCertificatePhoto.FileName.Trim()).ToLower();
+
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            TempData["Message"] = "File type not allowed.";
+                            return RedirectToAction("MasterEvent"); 
+                        }
+                        string folderPath = Server.MapPath("~/Content/EventBadge/"); 
+                        if (!Directory.Exists(folderPath))
+                            Directory.CreateDirectory(folderPath);
+                        // Set the file name and save path
+                        string fileName = Path.GetFileName(DateTime.Now + "_" + Regex.Replace(modal.EventName, @"\s+", "") + "_" + Generate4Char() + fileExtension);
+                        string fullPath = Path.Combine(folderPath.Trim(), fileName.Trim());
+                        EventCertificatePhoto.SaveAs(fullPath.Trim());
+                        modal.EventCertificatePhoto = fileName.Trim();
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["Message"] = "ERROR: " + ex.Message.ToString();
+                        return RedirectToAction("MasterEvent", "Admin");
+                    }
+                }
+                modal.CertificateHeight = (modal.CertificateHeight * 96);
+                modal.CertificateWidth = (modal.CertificateWidth * 96);
+                int printTypeMask = modal.PrintType.Sum();
+                modal.PrintTypeValue = printTypeMask.ToString();
                 ds = masterHelper.FetchEvent("SaveEvent", modal, Convert.ToInt16(Session["LoginId"]));
                 if (ds != null && ds.Tables[0].Rows.Count > 0)
                 {
@@ -651,6 +715,146 @@ namespace EventManagement.Controllers
 
 
         #endregion columns end
+        #region column set master
+        public ActionResult MasterShowColEventCertificate()
+        {
+            EventSettingColumns EC = new EventSettingColumns();
+            EC.mType = "View";
+            ds = masterHelper.FetchEventColumns("Get Date columns", EC, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                EC.EventDrop = CommonFunctions.ToList<EventDropdownList>(ds.Tables[0]);
+            }
+            if (ds != null && ds.Tables[1].Rows.Count > 0)
+            {
+                EC.EventcolumnsDrop = CommonFunctions.ToList<EventSettingColumns>(ds.Tables[1]);
+            }
+            return View(EC);
+        }
+
+        [HttpPost]
+        public ActionResult MasterShowColEventCertificate(EventSettingColumns modal)
+        {
+            if (modal.EventId != 0 && modal.RName != false)
+            {
+                ds = masterHelper.FetchEventColumns("SaveEventColumnsCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Please fill all details.";
+            }
+            return RedirectToAction("MasterShowColEventCertificate", "Admin");
+        }
+        [HttpGet]
+        public ActionResult DeleteEventcolumnsCertificate(int id, int eventid)
+        {
+            if (id != 0)
+            {
+                EventSettingColumns modal = new EventSettingColumns();
+                modal.ColumnID = id;
+                modal.EventId = eventid;
+                ds = masterHelper.FetchEventColumns("DeleteEventcolumnsCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Oops some error occured";
+            }
+            return RedirectToAction("MasterShowColEventCertificate", "Admin");
+        }
+        [HttpGet]
+        public ActionResult DeactiveEventcolumnsCertificate(int id)
+        {
+            if (id != 0)
+            {
+                EventSettingColumns modal = new EventSettingColumns();
+                modal.ColumnID = id;
+                ds = masterHelper.FetchEventColumns("DeActiveEventcolumnsCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            { TempData["Msg"] = "Oops some error occured"; }
+
+
+            return RedirectToAction("MasterShowColEventCertificate", "Admin");
+        }
+        [HttpGet]
+        public ActionResult ActiveEventcolumnsCertificate(int id)
+        {
+
+            if (id != 0)
+            {
+                EventSettingColumns modal = new EventSettingColumns();
+                modal.ColumnID = id;
+                ds = masterHelper.FetchEventColumns("ActiveEventcolumnsCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Oops some error occured";
+            }
+            return RedirectToAction("MasterShowColEventCertificate", "Admin");
+        }
+
+
+        #endregion columns end
         #region code MasterPrintSetupEvent
         public ActionResult MasterPrintSetupEvent()
         {
@@ -694,8 +898,9 @@ namespace EventManagement.Controllers
 
                 string mstyle = $"width: {width}px; height: {height}px; background-image: url('{backgroundImage}'); background-size: cover; position: relative; border: 1px solid #000; page-break-after: always;";
 
-                sb.Append("<div style=\"" + mstyle + "\">");
-                sb.Append("<div id='divprint' class='text-center'>");
+                sb.Append("<div  style=\"" + mstyle + "\">");
+                sb.Append("<div id='divprint' class='text-center canvas'>");
+                sb.Append("<div id='canvas' class='text-center'>");
                 // Add content as absolutely positioned inside the badge
                 if (ds.Tables[2].Rows.Count > 0)
                 {
@@ -708,7 +913,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[j]["columName"].ToString().ToLower() == "photo" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "photo")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\"><img src='../Content/BadgePhoto/Dummybadgephoto.jpg' height='" + ds.Tables[2].Rows[j]["TotalHeight"].ToString().ToLower() + "px' width=' " + ds.Tables[2].Rows[j]["TotalWidth"].ToString().ToLower() + "'px'></div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\"><img src='../Content/BadgePhoto/Dummybadgephoto.jpg' height='" + ds.Tables[2].Rows[j]["TotalHeight"].ToString().ToLower() + "px' width=' " + ds.Tables[2].Rows[j]["TotalWidth"].ToString().ToLower() + "'px'></div>");
                             }
                         }
                         //name
@@ -718,7 +923,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[k]["columName"].ToString().ToLower() == "name" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "name")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Exhibitor Name</div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\">Display Exhibitor Name</div>");
                             }
                         }
                         // designation
@@ -728,7 +933,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[l]["columName"].ToString().ToLower() == "designation" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "designation")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Designation Name</div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\">Display Designation Name</div>");
                             }
                         }
                         //company
@@ -738,7 +943,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[m]["columName"].ToString().ToLower() == "company" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "company")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Company Name</div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\">Display Company Name</div>");
                             }
                         }
                         //mobile
@@ -748,7 +953,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[p]["columName"].ToString().ToLower() == "mobile" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "mobile")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Mobile Number</div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\">Display Mobile Number</div>");
                             }
                         }
                         //email
@@ -758,7 +963,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[q]["columName"].ToString().ToLower() == "email" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "email")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Email Name</div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\">Display Email Name</div>");
                             }
                         }
                         //barcode
@@ -768,7 +973,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[n]["columName"].ToString().ToLower() == "barcode" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "barcode")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\"><img src='../Content/QRCodesScanner/DummyQR.png' height='" + ds.Tables[2].Rows[n]["TotalHeight"].ToString().ToLower() + "px' width='" + ds.Tables[2].Rows[n]["TotalWidth"].ToString().ToLower() + "'px'></div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\"><img src='../Content/QRCodesScanner/DummyQR.png' height='" + ds.Tables[2].Rows[n]["TotalHeight"].ToString().ToLower() + "px' width='" + ds.Tables[2].Rows[n]["TotalWidth"].ToString().ToLower() + "'px'></div>");
                             }
                         }
                         //category
@@ -778,7 +983,7 @@ namespace EventManagement.Controllers
 
                             if (ds.Tables[2].Rows[o]["columName"].ToString().ToLower() == "category" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "category")
                             {
-                                sb.Append("<div style=\"" + mstyleloopcode + "\" id='mcat'>Display Category Name</div>");
+                                sb.Append("<div class='draggable' style=\"" + mstyleloopcode + "\" id='mcat'>Display Category Name</div>");
                             }
                         }
                     }
@@ -787,7 +992,7 @@ namespace EventManagement.Controllers
                 {
                     if (ds.Tables[1].Rows[0]["Photo"].ToString().ToLower() == "true")
                     {
-                        sb.Append("<div id='divimage'><img src='../Content/BadgePhoto/Dummybadgephoto.jpg' height='75px' width='75px'></div>");
+                        sb.Append("<div id='divimage' class='draggable'><img src='../Content/BadgePhoto/Dummybadgephoto.jpg' height='75px' width='75px'></div>");
                     }
                     if (ds.Tables[1].Rows[0]["RName"].ToString().ToLower() == "true")
                     {
@@ -818,6 +1023,7 @@ namespace EventManagement.Controllers
                         sb.Append("<div  id='divcartegory'>Category Name</div>");
                     }
                 }
+                sb.Append("</div>");
                 sb.Append("</div>");
                 sb.Append("</div>");
                 string mBadge = sb.ToString();
@@ -1039,6 +1245,344 @@ namespace EventManagement.Controllers
             return RedirectToAction("MasterPrintSetupEvent", "Admin");
         }
         #endregion
+        #region code MasterPrintSetupEventCertificate
+        public ActionResult MasterPrintSetupEventCertificate()
+        {
+            EventPrintSetup EC = new EventPrintSetup();
+            ds = masterHelper.FetchEventPrintSetup("Get Date PrintSetupCertificate", EC, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                EC.EventDrop = CommonFunctions.ToList<EventDropdownList>(ds.Tables[0]);
+            }
+            return View(EC);
+        }
+        [HttpGet]
+        public ActionResult GetColumnsByFilterCertificate(int EventId = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            EventSettingCol2 model = new EventSettingCol2();
+            try
+            {
+                model.EventId = EventId;
+                ds = masterHelper.FetchEventPrintSetup2("Get Date PrintSetupCertificate", model, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[1].Rows.Count > 0)
+                {
+                    model.EventcolumnsDrop = CommonFunctions.ToList<EventSettingCol2>(ds.Tables[1]);
+                }
+                if (ds != null && ds.Tables[2].Rows.Count > 0)
+                {
+                    model.ResultSetting = CommonFunctions.ToList<EventPrintSet>(ds.Tables[2]);
+                }
+                //  string partial1Html = RenderPartialViewToString("_PrintSetupColumns", model.EventcolumnsDrop);
+                var combinedModel = new EventSettingCol2
+                {
+                    EventcolumnsDrop = model.EventcolumnsDrop,
+                    ResultSetting = model.ResultSetting
+                };
+
+                // Pass both to the partial view
+                string partial1Html = RenderPartialViewToString("_PrintSetupColumnsCertificate", combinedModel);
+                string width = ds.Tables[0].Rows[0]["BadgeWidth"].ToString();   // e.g., "252"
+                string height = ds.Tables[0].Rows[0]["BadgeHeight"].ToString(); // e.g., "161"
+                string backgroundImage = "../Content/EventBadge/" + ds.Tables[0].Rows[0]["EventBadgePhoto"].ToString();
+
+                string mstyle = $"width: {width}px; height: {height}px; background-image: url('{backgroundImage}'); background-size: cover; position: relative; border: 1px solid #000; page-break-after: always;";
+
+                sb.Append("<div  style=\"" + mstyle + "\">");
+                sb.Append("<div id='divprint' class='text-center'>");
+                // Add content as absolutely positioned inside the badge
+                if (ds.Tables[2].Rows.Count > 0)
+                {
+                    //photo
+                    for (int i = 0; ds.Tables[2].Rows.Count > i; i++)
+                    {
+                        //barcode
+                        for (int n = 0; ds.Tables[2].Rows.Count > n; n++)
+                        {
+                            string mstyleloopcode = $"margin-top: {ds.Tables[2].Rows[n]["MarginTop"].ToString().ToLower()}px; margin-bottom: {ds.Tables[2].Rows[n]["MarginBottom"].ToString().ToLower()}px; margin-left: {ds.Tables[2].Rows[n]["MarginLeft"].ToString().ToLower()}px; margin-right: {ds.Tables[2].Rows[n]["MarginRight"].ToString().ToLower()}px;";
+
+                            if (ds.Tables[2].Rows[n]["columName"].ToString().ToLower() == "barcode" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "barcode")
+                            {
+                                sb.Append("<div style=\"" + mstyleloopcode + "\"><img src='../Content/QRCodesScanner/DummyQR.png' height='" + ds.Tables[2].Rows[n]["TotalHeight"].ToString().ToLower() + "px' width='" + ds.Tables[2].Rows[n]["TotalWidth"].ToString().ToLower() + "'px'></div>");
+                            }
+                        }
+                        //name
+                        for (int k = 0; ds.Tables[2].Rows.Count > k; k++)
+                        {
+                            string mstyleloopcode = $"margin-top: {ds.Tables[2].Rows[k]["MarginTop"].ToString().ToLower()}px; margin-bottom: {ds.Tables[2].Rows[k]["MarginBottom"].ToString().ToLower()}px; margin-left: {ds.Tables[2].Rows[k]["MarginLeft"].ToString().ToLower()}px; margin-right: {ds.Tables[2].Rows[k]["MarginRight"].ToString().ToLower()}px;font-size: {ds.Tables[2].Rows[k]["FontSize"].ToString().ToLower()}px; font: {ds.Tables[2].Rows[k]["FontName"].ToString().ToLower()};font-weight: {ds.Tables[2].Rows[k]["FontWeight"].ToString().ToLower()};";
+
+                            if (ds.Tables[2].Rows[k]["columName"].ToString().ToLower() == "name" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "name")
+                            {
+                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Certificate Name</div>");
+                            }
+                        }
+                        // designation
+                        for (int l = 0; ds.Tables[2].Rows.Count > l; l++)
+                        {
+                            string mstyleloopcode = $"margin-top: {ds.Tables[2].Rows[l]["MarginTop"].ToString().ToLower()}px; margin-bottom: {ds.Tables[2].Rows[l]["MarginBottom"].ToString().ToLower()}px; margin-left: {ds.Tables[2].Rows[l]["MarginLeft"].ToString().ToLower()}px; margin-right: {ds.Tables[2].Rows[l]["MarginRight"].ToString().ToLower()}px;font-size: {ds.Tables[2].Rows[l]["FontSize"].ToString().ToLower()}px; font: {ds.Tables[2].Rows[l]["FontName"].ToString().ToLower()};font-weight: {ds.Tables[2].Rows[l]["FontWeight"].ToString().ToLower()};";
+
+                            if (ds.Tables[2].Rows[l]["columName"].ToString().ToLower() == "designation" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "designation")
+                            {
+                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Certificate Designation Name</div>");
+                            }
+                        }
+                        //company
+                        for (int m = 0; ds.Tables[2].Rows.Count > m; m++)
+                        {
+                            string mstyleloopcode = $"margin-top: {ds.Tables[2].Rows[m]["MarginTop"].ToString().ToLower()}px; margin-bottom: {ds.Tables[2].Rows[m]["MarginBottom"].ToString().ToLower()}px; margin-left: {ds.Tables[2].Rows[m]["MarginLeft"].ToString().ToLower()}px; margin-right: {ds.Tables[2].Rows[m]["MarginRight"].ToString().ToLower()}px;font-size: {ds.Tables[2].Rows[m]["FontSize"].ToString().ToLower()}px; font: {ds.Tables[2].Rows[m]["FontName"].ToString().ToLower()};font-weight: {ds.Tables[2].Rows[m]["FontWeight"].ToString().ToLower()};";
+
+                            if (ds.Tables[2].Rows[m]["columName"].ToString().ToLower() == "company" && ds.Tables[2].Rows[i]["columName"].ToString().ToLower() == "company")
+                            {
+                                sb.Append("<div style=\"" + mstyleloopcode + "\">Display Certificate Company Name</div>");
+                            }
+                        }
+                                            
+                    }
+                }
+                else
+                {
+                    //if (ds.Tables[1].Rows[0]["Photo"].ToString().ToLower() == "true")
+                    //{
+                    //    sb.Append("<div id='divimage' class='draggable'><img src='../Content/BadgePhoto/Dummybadgephoto.jpg' height='75px' width='75px'></div>");
+                    //}
+                    if (ds.Tables[1].Rows[0]["BarCode"].ToString().ToLower() == "true")
+                    {
+                        sb.Append("<div  id='divbarcode'><img src='../Content/QRCodesScanner/DummyQR.png' height='75px' width='75px'></div>");
+                    }
+                    if (ds.Tables[1].Rows[0]["RName"].ToString().ToLower() == "true")
+                    {
+                        sb.Append("<div  id='divname'>Display Certificate Exhibitor Name</div>");
+                    }
+                    if (ds.Tables[1].Rows[0]["Designation"].ToString().ToLower() == "true")
+                    {
+                        sb.Append("<div  id='divdesignation'>Certificate Designation Name</div>");
+                    }
+                    if (ds.Tables[1].Rows[0]["Company"].ToString().ToLower() == "true")
+                    {
+                        sb.Append("<div  id='divcompany'>Certificate Company Name</div>");
+                    }
+                }
+                sb.Append("</div>");
+                sb.Append("</div>");
+                string mBadge = sb.ToString();
+                return Json(new { partial1 = partial1Html, partial2 = mBadge }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                TempData["Msg"] = ex + " Oops some error occured. Redirected to login page";
+                return new HttpStatusCodeResult(500, "Internal Error: " + ex.Message);
+            }
+        }
+        // Helper method to render partial view as string (same as previous)
+        protected string RenderPartialViewToStringCertificate(string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName))
+                viewName = ControllerContext.RouteData.GetRequiredString("action");
+
+            ViewData.Model = model;
+
+            using (var sw = new StringWriter())
+            {
+                var viewResult = ViewEngines.Engines.FindPartialView(ControllerContext, viewName);
+                var viewContext = new ViewContext(ControllerContext, viewResult.View, ViewData, TempData, sw);
+                viewResult.View.Render(viewContext, sw);
+                viewResult.ViewEngine.ReleaseView(ControllerContext, viewResult.View);
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult MasterPrintSetupEventCertifcate(string[] PrintId, string[] ColumName, string[] MarginTop, string[] MarginBottom, string[] MarginLeft,
+           string[] MarginRight, string[] TotalHeight, string[] TotalWidth, string[] FontSize,
+           string[] FontName, string[] FontWeight, string[] Position, int EventId, EventPrintSet model)
+        {
+            try
+            {
+                List<EventPrintSetInner> list = new List<EventPrintSetInner>();
+                model.EventId = EventId;
+                for (int i = 0; i < ColumName.Length; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(ColumName[i]) || string.IsNullOrWhiteSpace(MarginTop[i]) || string.IsNullOrWhiteSpace(MarginBottom[i]) || string.IsNullOrWhiteSpace(MarginLeft[i]) ||
+                        string.IsNullOrWhiteSpace(MarginRight[i]) || (ColumName[i] != "Photo" && ColumName[i] != "BarCode" && (string.IsNullOrWhiteSpace(FontSize[i]) || string.IsNullOrWhiteSpace(FontName[i]) ||
+                         string.IsNullOrWhiteSpace(FontWeight[i]))) || string.IsNullOrWhiteSpace(Position[i]))
+                    {
+                        TempData["Msg"] = "All fields are required. Please ensure no row is left blank.";
+                        return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+                    }
+                    else
+                    {
+
+                        EventPrintSetInner pis = new EventPrintSetInner();
+                        pis.PrintId = string.IsNullOrWhiteSpace(PrintId[i]) ? 0 : Convert.ToInt32(PrintId[i]);
+                        pis.EventId = EventId;
+                        pis.ColumName = ColumName[i];
+                        pis.MarginTop = Convert.ToInt32(MarginTop[i]);
+                        pis.MarginBottom = Convert.ToInt32(MarginBottom[i]);
+                        pis.MarginLeft = Convert.ToInt32(MarginLeft[i]);
+                        pis.MarginRight = Convert.ToInt32(MarginRight[i]);
+
+                        if (ColumName[i] == "Photo" || ColumName[i] == "BarCode")
+                        {
+                            string mhasphoto = "";
+                            if (ColumName[i] == "Photo")
+                            {
+                                pis.FontSize = 0.0m;
+                                pis.FontName = null;
+                                pis.FontWeight = null;
+                                pis.TotalHeight = Convert.ToInt32(TotalHeight[0]);
+                                pis.TotalWidth = Convert.ToInt32(TotalWidth[0]);
+                                mhasphoto = "Yes";
+                            }
+                            if (ColumName[i] == "BarCode")
+                            {
+                                pis.FontSize = 0.0m;
+                                pis.FontName = null;
+                                pis.FontWeight = null;
+                                if (mhasphoto == "Yes")
+                                {
+                                    pis.TotalHeight = Convert.ToInt32(TotalHeight[1]);
+                                    pis.TotalWidth = Convert.ToInt32(TotalWidth[1]);
+                                }
+                                else
+                                {
+                                    pis.TotalHeight = Convert.ToInt32(TotalHeight[0]);
+                                    pis.TotalWidth = Convert.ToInt32(TotalWidth[0]);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            pis.FontSize = Convert.ToDecimal(FontSize[i]);
+                            pis.FontName = FontName[i];
+                            pis.FontWeight = FontWeight[i];
+                            pis.TotalHeight = 0;
+                            pis.TotalWidth = 0;
+                        }
+                        pis.Position = Position[i];
+                        list.Add(pis);
+                    }
+                }
+                model.tbl4EventPrint = list;
+                ds = masterHelper.FetchEventPrintSetupSave("SavePrintSetupCertificate", model, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString().Trim() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString().Trim();
+                        return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString().Trim();
+                        return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString().Trim();
+                    return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Msg"] = ex.ToString() + "!!! Something went wrong !!!. Please contact admin. ";
+                return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+            }
+
+        }
+
+        [HttpGet]
+        public ActionResult DeleteMasterPrintSetupEventCertifcate(int id)
+        {
+            if (id != 0)
+            {
+                EventPrintSetup modal = new EventPrintSetup();
+                modal.PrintId = id;
+                ds = masterHelper.FetchEventPrintSetup("DeletePrintSetupCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Oops some error occured";
+            }
+            return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+        }
+        [HttpGet]
+        public ActionResult DeactiveMasterPrintSetupEventCertifcate(int id)
+        {
+            if (id != 0)
+            {
+                EventPrintSetup modal = new EventPrintSetup();
+                modal.PrintId = id;
+                ds = masterHelper.FetchEventPrintSetup("DeActivePrintSetupCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            { TempData["Msg"] = "Oops some error occured"; }
+
+
+            return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+        }
+        [HttpGet]
+        public ActionResult ActiveMasterPrintSetupEventCertifcate(int id)
+        {
+
+            if (id != 0)
+            {
+                EventPrintSetup modal = new EventPrintSetup();
+                modal.PrintId = id;
+                ds = masterHelper.FetchEventPrintSetup("ActivePrintSetupCertificate", modal, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Oops some error occured";
+            }
+            return RedirectToAction("MasterPrintSetupEventCertificate", "Admin");
+        }
+        #endregion
         #region master excel 
         public ActionResult MasterExcel()
         {
@@ -1113,10 +1657,10 @@ namespace EventManagement.Controllers
                                         using (QRCode qrCode = new QRCode(qrCodeData))
                                         using (Bitmap qrCodeImage = qrCode.GetGraphic(20))
                                         {
-                                            string folderPath = Server.MapPath("~/Content/QRCodesScanner/" + ds.Tables[1].Rows[i]["EventName"].ToString());
+                                            string folderPath = Server.MapPath("~/Content/QRCodesScanner/" + Regex.Replace(ds.Tables[1].Rows[i]["EventName"].ToString(), @"\s+", "") );
                                             if (!Directory.Exists(folderPath.Trim()))
                                                 Directory.CreateDirectory(folderPath.Trim());
-                                            string fileName = $"{ds.Tables[1].Rows[i]["BPathCode"].ToString() + "_" + ds.Tables[1].Rows[i]["EventName"].ToString()}.png";
+                                            string fileName = $"{ds.Tables[1].Rows[i]["BPathCode"].ToString() + "_" + Regex.Replace(ds.Tables[1].Rows[i]["EventName"].ToString(), @"\s+", "")}.png";
                                             string fullPath = Path.Combine(folderPath.Trim(), fileName.Trim());
                                             qrCodeImage.Save(fullPath.Trim(), ImageFormat.Png);
                                             string BPath = fileName.Trim();
@@ -1273,7 +1817,7 @@ namespace EventManagement.Controllers
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {
                     sb.Append("<tr>");
-                    sb.Append("<td>" + (i + 1) + "&nbsp&nbsp;<a href='/Admin/DeleteBadge?TokenId=\" + ds.Tables[0].Rows[i][\"BadgeId\"] + \"' class='btn btn-primary btn-sm btn-with-icon'><span class='icon-paswrd-visible' onclick ='return confirm('Are you sure you want to delete all badge from this event record from database.?')'></span><span>Delete Badge</span></a></td>");
+                    sb.Append("<td>" + (i + 1) + "&nbsp&nbsp;<a href='/Admin/DeleteBadge?TokenId=" + ds.Tables[0].Rows[i]["BadgeId"] + "' class='btn btn-primary btn-sm btn-with-icon'><span class='icon-paswrd-visible' onclick ='return confirm('Are you sure you want to delete all badge from this event record from database.?')'></span><span>Delete Badge</span></a></td>");
                     sb.Append("<td>" + ds.Tables[0].Rows[i]["Category"] + "</td>");
                     sb.Append("<td>" + ds.Tables[0].Rows[i]["SpecialNo"] + "</td>");
                     sb.Append("<td>" + ds.Tables[0].Rows[i]["Name"] + "</td>");
@@ -1305,6 +1849,39 @@ namespace EventManagement.Controllers
             }
             return sb.ToString();
         }
+
+
+        public Action SaveMailContent(MailContnet modal)
+        {
+            if (modal.EventId != 0 && modal.MailContent.Trim() != null)
+            {
+                modal.EventId = modal.EventId;
+                modal.MailContent = modal.MailContent;
+                ds = masterHelper.FetchEmailContnet("EmailContnet", modal);
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        Session["EventId"] = ds.Tables[1].Rows[0]["EventID"].ToString();
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                    else
+                    {
+                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Oops some error occured";
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Please fill all detsils.";
+            }
+            return null;// MasterEvent();
+        }
+
 
 
         #endregion
