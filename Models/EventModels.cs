@@ -1,11 +1,7 @@
-﻿using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using static ClosedXML.Excel.XLPredefinedFormat;
+using System.Web.Mvc;
 
 namespace EventManagement.Models
 {
@@ -35,15 +31,14 @@ namespace EventManagement.Models
         public string EventBadgePhoto { get; set; }
         public decimal BadgeHeight { get; set; }
         public decimal BadgeWidth { get; set; }
-
-        public List<int> PrintType { get; set; }
-        public string PrintTypeValue { get; set; }
         public bool IsActive { get; set; }
-
+        public bool IsDual { get; set; }
+        public bool IsCertificate { get; set; }
         public string EventCertificatePhoto { get; set; }
         public decimal CertificateHeight { get; set; }
         public decimal CertificateWidth { get; set; }
-
+        public string PrintTypeValue { get; set; }
+        public List<int> PrintType { get; set; }
 
         public List<EventModelsList> mList { get; set; }
     }
@@ -60,6 +55,12 @@ namespace EventManagement.Models
         public string EventBadgePhoto { get; set; }
         public decimal BadgeHeight { get; set; }
         public decimal BadgeWidth { get; set; }
+        public bool IsDual { get; set; }
+        public bool IsCertificate { get; set; }
+        public string EventCertificatePhoto { get; set; }
+        public decimal CertificateHeight { get; set; }
+        public decimal CertificateWidth { get; set; }
+
         public List<int> PrintType { get; set; }
         public string printTypeValue { get; set; }
         public bool IsActive { get; set; }
@@ -80,7 +81,7 @@ namespace EventManagement.Models
         public bool IsActive { get; set; }
         public bool IsKitAllow { get; set; }
         public bool IsPaymentAllow { get; set; }
-      
+
         public List<EventCatNew> EventCatAll { get; set; }
         public List<EventDropdownList> EventDrop { get; set; }
     }
@@ -93,7 +94,7 @@ namespace EventManagement.Models
         public bool IsActive { get; set; }
         public bool IsKitAllow { get; set; }
         public bool IsPaymentAllow { get; set; }
-       
+
         public string EventName { get; set; }
     }
 
@@ -235,6 +236,31 @@ namespace EventManagement.Models
     }
 
 
+    public class BadgeFieldModel
+    {
+        public string field { get; set; }   // RName, Designation, Photo, Barcode
+        public int top { get; set; }
+        public int left { get; set; }
+        public int width { get; set; }
+        public int height { get; set; }
+        public int fontSize { get; set; }
+        public bool bold { get; set; }
+        public bool italic { get; set; }
+        public string type { get; set; } // text / image / barcode
+    }
+    public class TemplateVM
+    {
+        public string TemplateName { get; set; }
+        public string LayoutJson { get; set; }
+        public string BackgroundImage { get; set; }
+    }
+
+    public class EventPrintSaveVM
+    {
+        public int EventId { get; set; }
+        public string LayoutJson { get; set; }
+        public string BackgroundImage { get; set; }
+    }
     #endregion
     #region masterexcel
     public class Excelupload
@@ -242,10 +268,12 @@ namespace EventManagement.Models
         public int EventId { get; set; }
         public string EventName { get; set; }
         public int TotalExcel { get; set; }
+        public int BadgeId { get; set; }
         public List<EventDropdownList> EventDrop { get; set; }
         public List<mExcel> EventExcelUpload { get; set; }
         public List<mExcelUploadColumns> mExcelUploadListcolumns { get; set; }
         public List<mExcelListWht> EventExcelUploadListwht { get; set; }
+        public List<MailContnet> ExcelMailContnet { get; set; }
     }
     public class mExcel
     {
@@ -262,6 +290,7 @@ namespace EventManagement.Models
         public string Company { get; set; }
         public string Designation { get; set; }
         public string EventName { get; set; }
+        public Int32 BadgeId { get; set; }
     }
 
     public class mExcelUploadColumns
@@ -285,9 +314,12 @@ namespace EventManagement.Models
     {
         public int MailId { get; set; }
         public int EventId { get; set; }
+        [AllowHtml]
         public string MailContent { get; set; }
+        public string MailSubject { get; set; }
         public bool IsActive { get; set; }
-       
+        public int BadgeId { get; set; }
+
     }
 
     #endregion
@@ -339,7 +371,6 @@ namespace EventManagement.Models
 
     }
     #endregion
-
     #region Kiosk
     #region master event category
     public class Kiosk
@@ -353,7 +384,7 @@ namespace EventManagement.Models
 
         public List<Kiosk> KioskList { get; set; }
         public List<EventDropdownList> EventDrop { get; set; }
-    } 
+    }
     #endregion
     #endregion
 

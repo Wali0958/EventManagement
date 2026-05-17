@@ -21,7 +21,7 @@
     </style>
 }
 
-<div class="container bg-light">
+<div class="container-fluid bg-light">
     <div class="m-3">
         <section class="row">
             <h3 class="p-1">Admin Dashboard</h3>
@@ -104,7 +104,7 @@
     </div>
 </div>
 <div class="modal" tabindex="-1" id="mdlBadge" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog  modal-lg">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content" style="background-color:#F1F1F1">
             <div class="modal-header">
                 <h5 class="modal-title"><b>Alert</b></h5>
@@ -112,34 +112,33 @@
             </div>
             <div class="modal-body">
                 <div class="col-12 m-2" style="overflow:scroll;">
-                    <table id="tblprint" class="table table-bordered table-hover align-middle table-striped shadow-sm mtable">
+                    <table id="tblprint" class="table table-bordered table-hover table-striped shadow-sm">
                         <thead class="table-dark">
-                            <tr>
-                                <th>Sr.No</th>
-                                <th>Category</th>
-                                <th>Special No</th>
-                                <th>NAME</th>
-                                <th>Designation</th>
-                                <th>Company</th>
-                                <th>Mobile</th>
-                                <th>Country</th>
-                                <th>ID Type</th>
-                                <th>ID Number</th>
-                                <th>Photo</th>
-                                <th>Is Print</th>
-                                <th>Print On</th>
-                                <th>Is Reprint</th>
-                                <th>Reprint On</th>
-                                <th>Remarks</th>
-                                <th>Data Insert by</th>
-                                <th>Is Active</th>
-                                <th>Is Visit</th>
-                                <th>Visit On</th>
-                                <th>Kit Collect</th>
-                                <th>Collect On</th>
-                                <th>Collect By</th>
-                                <th>Action</th>
-                            </tr>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Category</th>
+                            <th>Special No</th>
+                            <th>NAME</th>
+                            <th>Designation</th>
+                            <th>Company</th>
+                            <th>Mobile</th>
+                            <th>Country</th>
+                            <th>ID Type</th>
+                            <th>ID Number</th>
+                            <th>Photo</th>
+                            <th>Is Print</th>
+                            <th>Print On</th>
+                            <th>Is Reprint</th>
+                            <th>Reprint On</th>
+                            <th>Remarks</th>
+                            <th>Data Insert by</th>
+                            <th>Is Active</th>
+                            <th>Is Visit</th>
+                            <th>Visit On</th>
+                            <th>Kit Collect</th>
+                            <th>Collect On</th>
+                            <th>Collect By</th>
+                        </tr>
                         </thead>
                         <tbody id="tblBadge">
                         </tbody>
@@ -149,8 +148,7 @@
         </div>
     </div>
 </div>
-
-
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
 <script>
     function ShowAllbadge(vId) {
          $.ajax({

@@ -5,7 +5,7 @@
 
     Int16 mHeight = 0, mWidth = 0;
 }
-<div class="container">
+<div class="container-fluid">
     <div class="m-3">
         <section class="row">
             <div class="col-12 m-2">
@@ -61,22 +61,26 @@
                                             <i class="fa fa-print"></i> Set Print Type *
                                         </label>
 
-                                        <div class="row">                                           
+                                        <div class="row">
                                             <div class="col-6">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="PrintType" value="2" id="ptDual">
                                                     <label class="form-check-label" for="ptDual">Dual</label>
+                                                    <select class="form-control" name="IsDual" id="ptDual">
+                                                        <option value="false" selected="">No</option>
+                                                        <option value="true">Yes</option>
+                                                    </select>
+
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="PrintType" value="3" id="ptCertificate">
                                                     <label class="form-check-label" for="ptCertificate">Certificate</label>
+                                                    <select class="form-control" name="IsCertificate" id="ptCertificate">
+                                                        <option value="false" selected="">No</option>
+                                                        <option value="true">Yes</option>
+                                                    </select>
+
                                                 </div>
-                                                @*<div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PrintType" value="4" id="ptLetter">
-                                                        <label class="form-check-label" for="ptLetter">Letter</label>
-                                                    </div>*@
                                             </div>
                                         </div>
                                     </div>
@@ -193,76 +197,110 @@
                     <h5 class="form-section-title">
                         <i class="fa fa-calendar-plus"></i> Event Information
                     </h5>
-                    <table id="tblprint" class="table table-hover mtable table-responsive border rounded shadow-sm mt-4">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Sr.No</th>
-                                <th>Event Name</th>
-                                <th>Location</th>
-                                <th>Start On</th>
-                                <th>End On</th>
-                                <th>Total Day</th>
-                                <th>Head Name</th>
-                                <th>Contact No</th>
-                                <th>Badge Photo</th>
-                                <th>Height/Width</th>
-                                <th>Is Acitve</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model != null)
-                            {
-                                Int16 Count = 1;
-                                foreach (EventManagement.Models.EventModelsList item in Model)
+                    <div class="overflow-scroll">
+                        <table id="tblprint" class="table table-hover mtable table-responsive border rounded shadow-sm mt-4 overflow-scroll">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Event Name</th>
+                                    <th>Location</th>
+                                    <th>Start On</th>
+                                    <th>End On</th>
+                                    <th>Total Day</th>
+                                    <th>Head Name</th>
+                                    <th>Contact No</th>
+                                    <th>Badge Photo</th>
+                                    <th>Height/Width</th>
+                                    <th>Certificate Photo</th>
+                                    <th>Height/Width</th>
+                                    <th>Is Dual</th>
+                                    <th>Is Certificate</th>
+                                    <th>Is Acitve</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
                                 {
-                                    DateTime mon = Convert.ToDateTime(@item.EventStartOn);
-                                    string fmon = mon.ToString("dd/MMM/yyyy");
-                                    DateTime mendon = Convert.ToDateTime(@item.EventEndOn);
-                                    string fmendon = mendon.ToString("dd/MMM/yyyy");
-                                    <tr>
-                                        <td>@Count</td>
-                                        <td>@item.EventName</td>
-                                        <td>@item.EventLocation</td>
-                                        <td>@fmon</td>
-                                        <td>@fmendon</td>
-                                        <td>@item.EventDay</td>
-                                        <td>@item.EventHeadName</td>
-                                        <td>@item.ContactNo</td>
-                                        <td><img height="100" width="100" src="~/Content/EventBadge/@item.EventBadgePhoto" /></td>
-                                        <td>
-                                            @item.BadgeHeight pixel /@item.BadgeWidth pixel
-                                        </td>
-                                        <td>
-                                            @if (@item.IsActive == true)
-                                            {
-                                                string m = "Active";
-                                                @m
-                                            }
-                                            else
-                                            {
-                                                string md = "Deactive";
-                                                @md
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (@item.IsActive == true)
-                                            {
-                                                @Html.ActionLink("Deactive", "DeactiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-warning" })
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionLink("Active", "ActiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-success" })
-                                            }
-                                            <div class="clearfix mt-1"></div>
-                                            @Html.ActionLink("Delete", "DeleteEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-danger" })
-                                        </td>
-                                    </tr>
-                                    Count++;
+                                    Int16 Count = 1;
+                                    foreach (EventManagement.Models.EventModelsList item in Model)
+                                    {
+                                        DateTime mon = Convert.ToDateTime(@item.EventStartOn);
+                                        string fmon = mon.ToString("dd/MMM/yyyy");
+                                        DateTime mendon = Convert.ToDateTime(@item.EventEndOn);
+                                        string fmendon = mendon.ToString("dd/MMM/yyyy");
+                                        <tr>
+                                            <td>@Count</td>
+                                            <td>@item.EventName</td>
+                                            <td>@item.EventLocation</td>
+                                            <td>@fmon</td>
+                                            <td>@fmendon</td>
+                                            <td>@item.EventDay</td>
+                                            <td>@item.EventHeadName</td>
+                                            <td>@item.ContactNo</td>
+                                            <td><img height="100" width="100" src="~/Content/EventBadge/@item.EventBadgePhoto" /></td>
+                                            <td>
+                                                @item.BadgeHeight pixel /@item.BadgeWidth pixel
+                                            </td>
+                                            <td><img height="100" width="100" src="~/Content/EventBadge/@item.EventCertificatePhoto" /></td>
+                                            <td>
+                                                @item.CertificateHeight pixel /@item.CertificateWidth pixel
+                                            </td>
+                                            <td>
+                                                @if (@item.IsDual == true)
+                                                {
+                                                    string m = "Yes";
+                                                    @m
+                                                }
+                                                else
+                                                {
+                                                    string md = "No";
+                                                    @md
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item.IsCertificate == true)
+                                                {
+                                                    string m = "Yes";
+                                                    @m
+                                                }
+                                                else
+                                                {
+                                                    string md = "No";
+                                                    @md
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item.IsActive == true)
+                                                {
+                                                    string m = "Active";
+                                                    @m
+                                                }
+                                                else
+                                                {
+                                                    string md = "Deactive";
+                                                    @md
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item.IsActive == true)
+                                                {
+                                                    @Html.ActionLink("Deactive", "DeactiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-warning" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink("Active", "ActiveEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-success" })
+                                                }
+                                                <div class="clearfix mt-1"></div>
+                                                @Html.ActionLink("Delete", "DeleteEvent", "Admin", new { id = @item.EventId }, new { @class = "btn btn-danger" })
+                                            </td>
+                                        </tr>
+                                        Count++;
+                                    }
                                 }
-                            }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                     <br />
                 </div>
             </div>
@@ -352,10 +390,10 @@
             }
 
             // Print Type (checkbox)
-            if (isValid && $("input[name='PrintType']:checked").length === 0) {
-                msg = "Please select at least one Print Type";
-                isValid = false;
-            }
+            //if (isValid && $("input[name='PrintType']:checked").length === 0) {
+            //    msg = "Please select at least one Print Type";
+            //    isValid = false;
+            //}
 
             // FINAL CHECK
             $(".form-control").removeClass("is-invalid");
@@ -363,31 +401,21 @@
             if (!isValid) {
                 $("#" + $(document.activeElement).attr("id")).addClass("is-invalid");
                 e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    text: msg
-                });
+                Swal.fire({icon: 'error',title: 'Validation Error',text: msg});
                 return false;
             }
             else {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Form submitted successfully!',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+                Swal.fire({icon: 'success',title: 'Success',text: 'form validation success!',timer: 500,showConfirmButton: false});
             }
 
         });
 
     });
 </script>
-<script> 
+<script>
     $(document).ready(function () {
         $('#ptCertificate').change(function () {
-            if ($(this).is(':checked')) {
+            if ($("#ptCertificate").val()=="true") {
                 $('#divcertificate').removeClass("d-none");
             } else {
                 $('#divcertificate').addClass("d-none");

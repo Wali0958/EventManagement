@@ -1,21 +1,20 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using EventManagement.Models;
 using QRCoder;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
-using System.Drawing.Imaging;
 using System.Drawing;
-using System.EnterpriseServices.Internal;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using static Microsoft.IO.RecyclableMemoryStreamManager;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System.Text.RegularExpressions;
 
 namespace EventManagement.Controllers
 {
@@ -82,6 +81,11 @@ namespace EventManagement.Controllers
                     ev.BadgeHeight = item.BadgeHeight;
                     ev.BadgeWidth = item.BadgeWidth;
                     ev.IsActive = item.IsActive;
+                    ev.IsDual = item.IsDual;
+                    ev.IsCertificate = item.IsCertificate;
+                    ev.EventCertificatePhoto = item.EventCertificatePhoto;
+                    ev.CertificateHeight = item.CertificateHeight;
+                    ev.CertificateWidth = item.CertificateWidth;
                     list.Add(ev);
                 }
             }
@@ -93,7 +97,7 @@ namespace EventManagement.Controllers
         }
 
         [HttpPost]
-        public ActionResult MasterEvent(EventModels modal, HttpPostedFileBase EventBadgePhoto,HttpPostedFileBase EventCertificatePhoto)
+        public ActionResult MasterEvent(EventModels modal, HttpPostedFileBase EventBadgePhoto, HttpPostedFileBase EventCertificatePhoto)
         {
             if (modal.EventName.Trim() != "" && modal.EventLocation.Trim() != null && modal.EventEndOn.ToString() != "01-01-2025" && modal.EventStartOn.ToString() != "01-01-2025"
                 && modal.ContactNo.Trim() != "" && modal.EventHeadName.Trim() != "")
@@ -103,17 +107,6 @@ namespace EventManagement.Controllers
                 {
                     try
                     {
-                       
-                        if (modal.PrintType != null && modal.PrintType.Count > 0)
-                        {
-                            modal.PrintTypeValue = string.Join(",", modal.PrintType);
-                        }
-                        else
-                        {
-                            TempData["Msg"] = "Please select at least one Print Type.";
-                            return RedirectToAction("MasterEvent");
-                        }
-                        // Optional: Validate file type
                         string[] allowedExtensions = { ".jpg", ".png", ".jpeg" };
                         string fileExtension = Path.GetExtension(EventBadgePhoto.FileName.Trim()).ToLower();
 
@@ -126,7 +119,7 @@ namespace EventManagement.Controllers
                         if (!Directory.Exists(folderPath))
                             Directory.CreateDirectory(folderPath);
                         // Set the file name and save path
-                        string fileName = Path.GetFileName(DateTime.Now + "_" + Regex.Replace(modal.EventName, @"\s+", "") + "_" + Generate4Char()+ fileExtension);
+                        string fileName = Path.GetFileName(DateTime.Now + "_" + Regex.Replace(modal.EventName, @"\s+", "") + "_" + Generate4Char() + fileExtension);
                         string fullPath = Path.Combine(folderPath.Trim(), fileName.Trim());
                         // Save the file
                         EventBadgePhoto.SaveAs(fullPath.Trim());
@@ -138,32 +131,19 @@ namespace EventManagement.Controllers
                         return RedirectToAction("MasterEvent", "Admin");
                     }
                 }
-                modal.BadgeHeight = (modal.BadgeHeight * 96);
-                modal.BadgeWidth = (modal.BadgeWidth * 96);
                 if (EventCertificatePhoto != null && EventCertificatePhoto.ContentLength > 0)
                 {
                     try
                     {
-
-                        if (modal.PrintType != null && modal.PrintType.Count > 0)
-                        {
-                            modal.PrintTypeValue = string.Join(",", modal.PrintType);
-                        }
-                        else
-                        {
-                            TempData["Msg"] = "Please select at least one Print Type.";
-                            return RedirectToAction("MasterEvent");
-                        }
-                        // Optional: Validate file type
                         string[] allowedExtensions = { ".jpg", ".png", ".jpeg" };
                         string fileExtension = Path.GetExtension(EventCertificatePhoto.FileName.Trim()).ToLower();
 
                         if (!allowedExtensions.Contains(fileExtension))
                         {
                             TempData["Message"] = "File type not allowed.";
-                            return RedirectToAction("MasterEvent"); 
+                            return RedirectToAction("MasterEvent");
                         }
-                        string folderPath = Server.MapPath("~/Content/EventBadge/"); 
+                        string folderPath = Server.MapPath("~/Content/EventBadge/");
                         if (!Directory.Exists(folderPath))
                             Directory.CreateDirectory(folderPath);
                         // Set the file name and save path
@@ -171,6 +151,8 @@ namespace EventManagement.Controllers
                         string fullPath = Path.Combine(folderPath.Trim(), fileName.Trim());
                         EventCertificatePhoto.SaveAs(fullPath.Trim());
                         modal.EventCertificatePhoto = fileName.Trim();
+                        modal.CertificateHeight = (modal.CertificateHeight * 96);
+                        modal.CertificateWidth = (modal.CertificateWidth * 96);
                     }
                     catch (Exception ex)
                     {
@@ -178,10 +160,10 @@ namespace EventManagement.Controllers
                         return RedirectToAction("MasterEvent", "Admin");
                     }
                 }
-                modal.CertificateHeight = (modal.CertificateHeight * 96);
-                modal.CertificateWidth = (modal.CertificateWidth * 96);
-                int printTypeMask = modal.PrintType.Sum();
-                modal.PrintTypeValue = printTypeMask.ToString();
+                modal.BadgeHeight = (modal.BadgeHeight * 96);
+                modal.BadgeWidth = (modal.BadgeWidth * 96);
+                modal.IsDual = modal.IsDual;
+                modal.IsCertificate = modal.IsCertificate;
                 ds = masterHelper.FetchEvent("SaveEvent", modal, Convert.ToInt16(Session["LoginId"]));
                 if (ds != null && ds.Tables[0].Rows.Count > 0)
                 {
@@ -579,6 +561,7 @@ namespace EventManagement.Controllers
         public ActionResult MasterShowColEvent()
         {
             EventSettingColumns EC = new EventSettingColumns();
+            EC.mType = "";
             ds = masterHelper.FetchEventColumns("Get Date columns", EC, Convert.ToInt16(Session["LoginId"]));
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
@@ -855,6 +838,135 @@ namespace EventManagement.Controllers
 
 
         #endregion columns end
+
+
+        #region Master Print Setup of Enfents (New Drag Drop)
+
+        public ActionResult PrintSetupTemplate()
+        {
+            EventPrintSetup EC = new EventPrintSetup();
+            ds = masterHelper.FetchEventPrintSetup("Get Date PrintSetupDD", EC, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                EC.EventDrop = CommonFunctions.ToList<EventDropdownList>(ds.Tables[0]);
+            }
+            return View(EC);
+        }
+
+        [HttpGet]
+        public ActionResult GetColumnsByFilterDrag(int EventId = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            EventSettingCol2 model = new EventSettingCol2();
+            model.EventId = EventId;
+
+            ds = masterHelper.FetchEventPrintSetup2(
+                "Get Date PrintSetup",
+                model,
+                Convert.ToInt16(Session["LoginId"])
+            );
+
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                string width = ds.Tables[0].Rows[0]["BadgeWidth"].ToString();
+                string height = ds.Tables[0].Rows[0]["BadgeHeight"].ToString();
+
+                string backgroundImage =
+                    "/Content/EventBadge/" +
+                    ds.Tables[0].Rows[0]["EventBadgePhoto"].ToString();
+
+                sb.Append($@"
+        <div id='badgeArea'
+             style='width:{width}px;
+                    height:{height}px;
+                    position:relative;
+                    background:url({backgroundImage});
+                    background-size:cover;
+                    border:1px solid #ccc;'>
+        </div>");
+            }
+
+            if (ds != null && ds.Tables[1].Rows.Count > 0)
+            {
+                model.EventcolumnsDrop =
+                    CommonFunctions.ToList<EventSettingCol2>(ds.Tables[1]);
+            }
+
+            if (ds != null && ds.Tables[2].Rows.Count > 0)
+            {
+                model.ResultSetting =
+                    CommonFunctions.ToList<EventPrintSet>(ds.Tables[2]);
+            }
+
+            return Json(new
+            {
+                columns = model.EventcolumnsDrop.FirstOrDefault(),
+                settings = model.ResultSetting,
+                badgeHtml = sb.ToString()
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult SaveTemplate(EventPrintSaveVM model)
+        {
+            try
+            {
+                if (model == null || model.EventId <= 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        msg = "Invalid Event"
+                    });
+                }
+
+                EventSettingCol2 obj = new EventSettingCol2();
+                obj.EventId = model.EventId;
+
+                DataSet ds = masterHelper.SaveEventPrintSetup(
+                    "SavePrintSetupDrag",
+                    obj,
+                    model.LayoutJson,
+                    model.BackgroundImage,
+                    Convert.ToInt16(Session["LoginId"])
+                );
+
+                if (ds != null &&
+                    ds.Tables.Count > 0 &&
+                    ds.Tables[0].Rows.Count > 0)
+                {
+                    string status =
+                        ds.Tables[0].Rows[0]["DB_STATUS"].ToString();
+
+                    string message =
+                        ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+
+                    return Json(new
+                    {
+                        success = status == "S",
+                        msg = message
+                    });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    msg = "No response from database"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    msg = ex.Message
+                });
+            }
+        }
+        #endregion 
+
+
         #region code MasterPrintSetupEvent
         public ActionResult MasterPrintSetupEvent()
         {
@@ -1246,6 +1358,91 @@ namespace EventManagement.Controllers
         }
         #endregion
         #region code MasterPrintSetupEventCertificate
+
+
+
+
+
+        #region Master Print Setup of Enfents (New Drag Drop Certificate)
+
+        public ActionResult PrintSetupCertificateTemplate()
+        {
+            EventPrintSetup EC = new EventPrintSetup();
+            ds = masterHelper.FetchEventPrintSetup("Get Date PrintSetupDD", EC, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                EC.EventDrop = CommonFunctions.ToList<EventDropdownList>(ds.Tables[0]);
+            }
+            return View(EC);
+        }
+
+        [HttpGet]
+        public ActionResult GetCertificateColumnsByFilterDrag(int EventId = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            EventSettingCol2 model = new EventSettingCol2();
+            model.EventId = EventId;
+            ds = masterHelper.FetchEventPrintSetup2("Get Date PrintSetupCertificate", model, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                string width = ds.Tables[0].Rows[0]["BadgeWidth"].ToString();
+                string height = ds.Tables[0].Rows[0]["BadgeHeight"].ToString();
+                string backgroundImage = "/Content/EventBadge/" + ds.Tables[0].Rows[0]["EventBadgePhoto"].ToString();
+                sb.Append($@"<div id='badgeArea'style='width:{width}px;height:{height}px;position:relative;background:url({backgroundImage});
+                        background-size:cover;border:1px solid #ccc;'></div>");
+            }
+            if (ds != null && ds.Tables[1].Rows.Count > 0)
+            {
+                model.EventcolumnsDrop = CommonFunctions.ToList<EventSettingCol2>(ds.Tables[1]);
+            }
+            if (ds != null && ds.Tables[2].Rows.Count > 0)
+            {
+                model.ResultSetting = CommonFunctions.ToList<EventPrintSet>(ds.Tables[2]);
+            }
+            return Json(new { columns = model.EventcolumnsDrop.FirstOrDefault(), settings = model.ResultSetting, badgeHtml = sb.ToString() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult SaveCertificateTemplate(EventPrintSaveVM model)
+        {
+            DataSet ds = new DataSet();
+
+            try
+            {
+                EventSettingCol2 obj = new EventSettingCol2();
+                obj.EventId = model.EventId;
+                ds = masterHelper.SaveEventPrintSetup("SavePrintSetupCertificate", obj, model.LayoutJson, model.BackgroundImage, Convert.ToInt16(Session["LoginId"]));
+                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            msg = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString()
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            msg = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString()
+                        });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, msg = "Oops some error occured" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, msg = ex.Message });
+            }
+        }
+        #endregion 
+
         public ActionResult MasterPrintSetupEventCertificate()
         {
             EventPrintSetup EC = new EventPrintSetup();
@@ -1336,7 +1533,7 @@ namespace EventManagement.Controllers
                                 sb.Append("<div style=\"" + mstyleloopcode + "\">Display Certificate Company Name</div>");
                             }
                         }
-                                            
+
                     }
                 }
                 else
@@ -1627,7 +1824,7 @@ namespace EventManagement.Controllers
                             mexcel.Mobile = row.Cell(6).Value.ToString().Trim();
                             mexcel.Email = row.Cell(7).Value.ToString().Trim();
                             mexcel.Country = row.Cell(8).Value.ToString().Trim();
-                            if (row.Cell(9).Value.ToString().ToLower() == "paid"|| row.Cell(9).Value.ToString().ToLower() == "yes")
+                            if (row.Cell(9).Value.ToString().ToLower() == "paid" || row.Cell(9).Value.ToString().ToLower() == "yes")
                             {
                                 mexcel.PaymentStatus = "true";
                             }
@@ -1657,7 +1854,7 @@ namespace EventManagement.Controllers
                                         using (QRCode qrCode = new QRCode(qrCodeData))
                                         using (Bitmap qrCodeImage = qrCode.GetGraphic(20))
                                         {
-                                            string folderPath = Server.MapPath("~/Content/QRCodesScanner/" + Regex.Replace(ds.Tables[1].Rows[i]["EventName"].ToString(), @"\s+", "") );
+                                            string folderPath = Server.MapPath("~/Content/QRCodesScanner/" + Regex.Replace(ds.Tables[1].Rows[i]["EventName"].ToString(), @"\s+", ""));
                                             if (!Directory.Exists(folderPath.Trim()))
                                                 Directory.CreateDirectory(folderPath.Trim());
                                             string fileName = $"{ds.Tables[1].Rows[i]["BPathCode"].ToString() + "_" + Regex.Replace(ds.Tables[1].Rows[i]["EventName"].ToString(), @"\s+", "")}.png";
@@ -1817,7 +2014,7 @@ namespace EventManagement.Controllers
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {
                     sb.Append("<tr>");
-                    sb.Append("<td>" + (i + 1) + "&nbsp&nbsp;<a href='/Admin/DeleteBadge?TokenId=" + ds.Tables[0].Rows[i]["BadgeId"] + "' class='btn btn-primary btn-sm btn-with-icon'><span class='icon-paswrd-visible' onclick ='return confirm('Are you sure you want to delete all badge from this event record from database.?')'></span><span>Delete Badge</span></a></td>");
+                    sb.Append("<td>" + (i + 1) + "&nbsp&nbsp;<a href='/Admin/DeleteBadge?TokenId=" + ds.Tables[0].Rows[i]["BadgeId"] + "' class='btn btn-danger btn-sm'><span class='icon-password-visible' onclick ='return confirm('Are you sure you want to delete all badge from this event record from database.?')'></span><i class='fa fa-trash'></i></a></td>");
                     sb.Append("<td>" + ds.Tables[0].Rows[i]["Category"] + "</td>");
                     sb.Append("<td>" + ds.Tables[0].Rows[i]["SpecialNo"] + "</td>");
                     sb.Append("<td>" + ds.Tables[0].Rows[i]["Name"] + "</td>");
@@ -1850,24 +2047,66 @@ namespace EventManagement.Controllers
             return sb.ToString();
         }
 
+        public ActionResult MasterSendmail()
+        {
+            Excelupload EC = new Excelupload();
+            ds = masterHelper.FetchExcelUpload("ViewExcelEvent", EC, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                EC.EventDrop = CommonFunctions.ToList<EventDropdownList>(ds.Tables[0]);
+            }
+            if (ds != null && ds.Tables[3].Rows.Count > 0)
+            {
+                EC.ExcelMailContnet = CommonFunctions.ToList<MailContnet>(ds.Tables[3]);
+            }
+            if (ds != null && ds.Tables[2].Rows.Count > 0)
+            {
+                EC.EventExcelUploadListwht = CommonFunctions.ToList<mExcelListWht>(ds.Tables[2]);
+            }
+            return View(EC);
+        }
 
-        public Action SaveMailContent(MailContnet modal)
+        [HttpGet]
+        public JsonResult GetMailContentByEvent(int eventId)
+        {
+            Excelupload EC = new Excelupload();
+            MailContnet model = new MailContnet();
+            EC.EventId = eventId;
+
+            ds = masterHelper.FetchExcelUpload("ViewExcelEvent", EC, Convert.ToInt16(Session["LoginId"]));
+            if (ds != null && ds.Tables[3].Rows.Count > 0)
+            {
+                return Json(new
+                {
+                    status = true,
+                    subject = ds.Tables[3].Rows[0]["MailSubject"].ToString(),
+                    content = ds.Tables[3].Rows[0]["MailContent"].ToString()
+                }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { status = false }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult SaveMailContent(MailContnet modal)
         {
             if (modal.EventId != 0 && modal.MailContent.Trim() != null)
             {
                 modal.EventId = modal.EventId;
                 modal.MailContent = modal.MailContent;
+                modal.MailSubject = modal.MailSubject;
                 ds = masterHelper.FetchEmailContnet("EmailContnet", modal);
                 if (ds != null && ds.Tables[0].Rows.Count > 0)
                 {
-                    if (ds.Tables[0].Rows[0]["DB_STATUS"].ToString() == "S")
+                    if (ds.Tables[1].Rows[0]["DB_STATUS"].ToString() == "S")
                     {
-                        Session["EventId"] = ds.Tables[1].Rows[0]["EventID"].ToString();
-                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                        Session["EventId"] = ds.Tables[0].Rows[0]["EventID"].ToString();
+                        TempData["Msg"] = ds.Tables[1].Rows[0]["DB_StatusMessage"].ToString();
                     }
                     else
                     {
-                        TempData["Msg"] = ds.Tables[0].Rows[0]["DB_StatusMessage"].ToString();
+                        TempData["Msg"] = ds.Tables[1].Rows[0]["DB_StatusMessage"].ToString();
                     }
                 }
                 else
@@ -1879,11 +2118,683 @@ namespace EventManagement.Controllers
             {
                 TempData["Msg"] = "Please fill all detsils.";
             }
-            return null;// MasterEvent();
+            return RedirectToAction("MasterSendmail");
+        }
+
+        public ActionResult SendSingleMail(Int16 badgeid, Int16 eventid)
+        {
+            try
+            {
+                MailContnet model = new MailContnet();
+                model.EventId = eventid;
+                model.BadgeId = badgeid;
+
+                // GET TEMPLATE
+                ds = masterHelper.FetchEmailContnet("GetMailContentByEventId", model);
+
+                if (ds.Tables[0].Rows.Count <= 0)
+                {
+                    TempData["Msg"] = "Mail template not found";
+                    return RedirectToAction("MasterSendmail");
+                }
+
+                string subject =
+                    ds.Tables[0].Rows[0]["MailSubject"].ToString();
+
+                string body =
+                    ds.Tables[0].Rows[0]["MailContent"].ToString();
+
+                if (ds.Tables[1].Rows.Count > 0)
+                {
+                    DataRow row = ds.Tables[1].Rows[0];
+                    string finalBody = ReplaceDynamicData(body, row);
+                    string email = row["Email"].ToString();
+                    string passPath = GenerateVisitorPass(ds);
+
+                    bool result = SendMail(
+                        email,
+                        subject,
+                        finalBody,
+                        passPath
+                    );
+
+                    if (result)
+                    {
+                        masterHelper.UpdateMailStatus(badgeid, eventid, 1);
+                        TempData["Msg"] = "Mail sent successfully";
+                    }
+                    else
+                    {
+                        TempData["Msg"] = "Mail sending failed";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Msg"] = ex.Message;
+            }
+
+            return RedirectToAction("MasterSendmail");
+        }
+
+        [HttpPost]
+        public ActionResult SendMailToAll(int EventId = 0)
+        {
+            try
+            {
+                MailContnet model = new MailContnet();
+                model.EventId = EventId;
+                ds = masterHelper.FetchEmailContnet("GetMailContentByEventId", model);
+                if (ds.Tables[0].Rows.Count <= 0)
+                {
+                    TempData["Msg"] = "Mail template not found";
+                    return RedirectToAction("MasterSendmail");
+                }
+                string subject = ds.Tables[0].Rows[0]["MailSubject"].ToString();
+                string body = ds.Tables[0].Rows[0]["MailContent"].ToString();
+                // GET ALL USERS EVENTWISE
+                Excelupload EC = new Excelupload();
+                EC.EventId = EventId;
+                DataSet dsUsers = masterHelper.FetchExcelUpload("GetUsersByEventId", EC, Convert.ToInt16(Session["LoginId"]));
+                int success = 0;
+                if (dsUsers.Tables[1].Rows.Count > 0)
+                {
+                    foreach (DataRow row in dsUsers.Tables[1].Rows)
+                    {
+                        try
+                        {
+                            string finalBody = ReplaceDynamicData(body, row);
+                            string email = row["Email"].ToString();
+                            string passPath = GenerateVisitorPass(dsUsers);
+                            bool result = SendMail(email, subject, finalBody, passPath);
+                            if (result)
+                            {
+                                success++;
+                                masterHelper.UpdateMailStatus(Convert.ToInt32(row["BadgeId"]), EventId, 1);
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+                TempData["Msg"] = success + " mails sent successfully";
+            }
+            catch (Exception ex)
+            {
+                TempData["Msg"] = ex.Message;
+            }
+            return RedirectToAction("MasterSendmail");
         }
 
 
+        public string ReplaceDynamicData(
+            string body,
+            DataRow row
+        )
+        {
+            body = body.Replace(
+                "lbl_name",
+                row["Name"].ToString()
+            );
 
+            body = body.Replace(
+                "lbl_company",
+                row["Company"].ToString()
+            );
+
+            body = body.Replace(
+                "lbl_desination",
+                row["Designation"].ToString()
+            );
+
+            body = body.Replace(
+                "lbl_address",
+                row["Address"].ToString()
+            );
+
+            body = body.Replace(
+                "lbleventname",
+                row["EventName"].ToString()
+            );
+
+            body = body.Replace(
+                "lbldatestart",
+                Convert.ToDateTime(row["StartDate"])
+                .ToString("dd MMM yyyy")
+            );
+
+            body = body.Replace(
+                "lbldateend",
+                Convert.ToDateTime(row["EndDate"])
+                .ToString("dd MMM yyyy")
+            );
+
+            return body;
+        }
+
+        public bool SendMail(
+            string toEmail,
+            string subject,
+            string body,
+            string attachmentPath = ""
+        )
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+
+                mail.From = new MailAddress(
+                    ConfigurationManager.AppSettings["FromMail"]
+                );
+
+                mail.To.Add(toEmail);
+
+                mail.Subject = subject;
+
+                mail.Body = body;
+
+                mail.IsBodyHtml = true;
+
+                // ==========================
+                // ATTACHMENT
+                // ==========================
+
+                if (!string.IsNullOrEmpty(attachmentPath))
+                {
+                    Attachment attachment =
+                        new Attachment(attachmentPath);
+
+                    mail.Attachments.Add(attachment);
+                }
+
+                SmtpClient smtp = new SmtpClient();
+
+                smtp.Host =
+                    ConfigurationManager.AppSettings["SmtpHost"];
+
+                smtp.Port =
+                    Convert.ToInt32(
+                        ConfigurationManager.AppSettings["SmtpPort"]
+                    );
+
+                smtp.Credentials =
+                    new NetworkCredential(
+                        ConfigurationManager.AppSettings["FromMail"],
+                        ConfigurationManager.AppSettings["MailPassword"]
+                    );
+
+                smtp.EnableSsl = true;
+
+                smtp.Send(mail);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+        public string GenerateVisitorPass(DataSet row)
+        {
+            try
+            {
+                // ==========================================
+                // BADGE SIZE
+                // ==========================================
+
+                int badgeWidth = 600;
+                int badgeHeight = 350;
+
+                badgeWidth =
+                    Convert.ToInt16(row.Tables[1].Rows[0]["BadgeWidth"]);
+
+
+                badgeHeight = Convert.ToInt16(
+                    row.Tables[1].Rows[0]["BadgeHeight"]);
+
+                if (badgeWidth <= 0)
+                    badgeWidth = 600;
+
+                if (badgeHeight <= 0)
+                    badgeHeight = 350;
+
+                // ==========================================
+                // BACKGROUND IMAGE
+                // ==========================================
+
+                string backgroundImage =
+                    Server.MapPath(
+                        "~/Content/BadgePhoto/DummyBadgePhotoNew.png"
+                    );
+
+                if (row.Tables[1].Rows[0]["EventBadgePhoto"] != DBNull.Value)
+                {
+                    backgroundImage =
+                        Server.MapPath(
+                            "~/Content/EventBadge/" +
+                            row.Tables[1].Rows[0]["EventBadgePhoto"].ToString()
+                        );
+                }
+
+                // ==========================================
+                // CREATE BITMAP
+                // ==========================================
+
+                Bitmap bitmap =
+                    new Bitmap(badgeWidth, badgeHeight);
+
+                Graphics graphics =
+                    Graphics.FromImage(bitmap);
+
+                graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                graphics.InterpolationMode =
+                    System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+                graphics.TextRenderingHint =
+                    System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                // ==========================================
+                // DRAW BACKGROUND
+                // ==========================================
+
+                if (System.IO.File.Exists(backgroundImage))
+                {
+                    using (Image bg = Image.FromFile(backgroundImage))
+                    {
+                        graphics.DrawImage(
+                            bg,
+                            0,
+                            0,
+                            badgeWidth,
+                            badgeHeight
+                        );
+                    }
+                }
+
+                // ==========================================
+                // SORT ELEMENTS
+                // ==========================================
+
+                var settings =
+                    row.Tables[2]
+                    .AsEnumerable()
+                    .OrderBy(x =>
+                    {
+                        string col = x["ColumName"].ToString();
+
+                        switch (col)
+                        {
+                            case "Photo":
+                                return 599;
+
+                            case "Name":
+                                return 699;
+
+                            case "Designation":
+                                return 799;
+
+                            case "Company":
+                                return 899;
+
+                            case "Category":
+                                return 4;
+
+                            case "Country":
+                                return 5;
+
+                            case "BarCode":
+                                return 999;
+
+                            default:
+                                return 100;
+                        }
+                    })
+                    .ToList();
+
+                // ==========================================
+                // AUTO TOP POSITION
+                // ==========================================
+
+                int currentTop = 20;
+
+                // ==========================================
+                // LOOP ELEMENTS
+                // ==========================================
+
+                foreach (DataRow dr in settings)
+                {
+                    string column =
+                        dr["ColumName"].ToString();
+
+                    int top = 0;
+                    int left = 0;
+                    int width = 250;
+                    int height = 40;
+                    int fontSize = 14;
+
+                    // ======================================
+                    // DATABASE VALUES
+                    // ======================================
+
+                    int.TryParse(
+                        dr["MarginTop"]?.ToString(),
+                        out top
+                    );
+
+                    int.TryParse(
+                        dr["MarginLeft"]?.ToString(),
+                        out left
+                    );
+
+                    int.TryParse(
+                        dr["MarginRight"]?.ToString(),
+                        out width
+                    );
+
+                    int.TryParse(
+                        dr["MarginBottom"]?.ToString(),
+                        out height
+                    );
+
+                    int.TryParse(
+                        dr["FontSize"]?.ToString(),
+                        out fontSize
+                    );
+
+                    // ======================================
+                    // DEFAULT VALUES
+                    // ======================================
+
+                    if (width <= 0)
+                        width = 450;
+
+                    if (height <= 0)
+                        height = 40;
+
+                    if (fontSize <= 0)
+                        fontSize = 14;
+
+                    // ======================================
+                    // AUTO CENTER
+                    // ======================================
+
+                    left = (badgeWidth - width) / 2;
+
+                    // ======================================
+                    // AUTO NEW LINE
+                    // ======================================
+
+                    if (top <= 0 && column != "BarCode")
+                    {
+                        top = currentTop;
+                    }
+
+                    // ======================================
+                    // FONT
+                    // ======================================
+
+                    string fontName =
+                        string.IsNullOrWhiteSpace(
+                            dr["FontName"]?.ToString()
+                        )
+                        ? "Arial"
+                        : dr["FontName"].ToString();
+
+                    string fontWeight =
+                        dr["FontWeight"]?.ToString();
+
+                    FontStyle style =
+                        FontStyle.Regular;
+
+                    if (
+                        !string.IsNullOrEmpty(fontWeight)
+                        &&
+                        fontWeight.ToLower().Contains("bold")
+                    )
+                    {
+                        style = FontStyle.Bold;
+                    }
+
+                    Font font;
+
+                    try
+                    {
+                        font =
+                            new Font(
+                                fontName,
+                                fontSize,
+                                style
+                            );
+                    }
+                    catch
+                    {
+                        font =
+                            new Font(
+                                "Arial",
+                                fontSize,
+                                FontStyle.Regular
+                            );
+                    }
+
+                    Brush brush = Brushes.Black;
+
+                    // ======================================
+                    // ALIGNMENT
+                    // ======================================
+
+                    StringFormat sf =
+                        new StringFormat();
+
+                    sf.Alignment =
+                        StringAlignment.Center;
+
+                    sf.LineAlignment =
+                        StringAlignment.Center;
+
+                    RectangleF rect =
+                        new RectangleF(
+                            left,
+                            top,
+                            width,
+                            height
+                        );
+
+                    // ======================================
+                    // PHOTO
+                    // ======================================
+
+                    //if (column == "Photo")
+                    //{
+                    //    try
+                    //    {
+                    //        string photo =
+                    //            Server.MapPath(
+                    //                "~/Content/BadgePhoto/" +
+                    //                row.Tables[1].Rows[0]["Photo"]
+                    //                    .ToString()
+                    //            );
+
+                    //        if (System.IO.File.Exists(photo))
+                    //        {
+                    //            using (Image img = Image.FromFile(photo))
+                    //            {
+                    //                graphics.DrawImage(
+                    //                    img,
+                    //                    left,
+                    //                    top,
+                    //                    width,
+                    //                    height
+                    //                );
+                    //            }
+                    //        }
+                    //    }
+                    //    catch
+                    //    {
+
+                    //    }
+                    //}
+
+                    // ======================================
+                    // BARCODE
+                    // ======================================
+
+                    //else
+                    if (column == "BarCode")
+                    {
+                        try
+                        {
+                            width = 150;
+                            height = 150;
+
+                            // center barcode
+                            left =
+                                (badgeWidth - width) / 2;
+
+                            // barcode bottom
+                            top =
+                                badgeHeight - height - 20;
+
+                            string qrImage =
+                                Server.MapPath(
+                                    "~/Content/QRCodesScanner/" +
+                                    row.Tables[1].Rows[0]["EventName"]
+                                        .ToString()
+                                        .Replace(" ", "")
+                                        .Trim()
+                                    + "/"
+                                    + row.Tables[1].Rows[0]["BPath"]
+                                        .ToString()
+                                );
+
+                            if (System.IO.File.Exists(qrImage))
+                            {
+                                using (Image qr = Image.FromFile(qrImage))
+                                {
+                                    graphics.DrawImage(
+                                        qr,
+                                        left,
+                                        top,
+                                        width,
+                                        height
+                                    );
+                                }
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
+                    // ======================================
+                    // TEXT DATA
+                    // ======================================
+
+                    //else
+                    //{
+                    //    string value = "";
+
+                    //    switch (column)
+                    //    {
+                    //        case "Name":
+
+                    //            value =
+                    //                row.Tables[1].Rows[0]["Name"]
+                    //                    .ToString();
+
+                    //            break;
+
+                    //        case "Designation":
+
+                    //            value =
+                    //                row.Tables[1].Rows[0]["Designation"]
+                    //                    .ToString();
+
+                    //            break;
+
+                    //        case "Company":
+
+                    //            value =
+                    //                row.Tables[1].Rows[0]["Company"]
+                    //                    .ToString();
+
+                    //            break;
+
+                    //        case "Category":
+
+                    //            value =
+                    //                row.Tables[1].Rows[0]["Category"]
+                    //                    .ToString();
+
+                    //            break;
+
+                    //        case "Country":
+
+                    //            value =
+                    //                row.Tables[1].Rows[0]["Country"]
+                    //                    .ToString();
+
+                    //            break;
+                    //    }
+
+                    //    graphics.DrawString(
+                    //        value,
+                    //        font,
+                    //        brush,
+                    //        rect,
+                    //        sf
+                    //    );
+
+                    //    // ==================================
+                    //    // NEXT LINE
+                    //    // ==================================
+
+                    //    currentTop =
+                    //        top + height + 10;
+                    //}
+                }
+
+                // ==========================================
+                // SAVE IMAGE
+                // ==========================================
+
+                string folder =
+                    Server.MapPath(
+                        "~/Content/GeneratedPass/"
+                    );
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                string fileName =
+                    Guid.NewGuid().ToString() + ".png";
+
+                string fullPath =
+                    Path.Combine(folder, fileName);
+
+                bitmap.Save(
+                    fullPath,
+                    ImageFormat.Png
+                );
+
+                graphics.Dispose();
+                bitmap.Dispose();
+
+                return fullPath;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
         #endregion
         #region Bulk QR Code
         public ActionResult BulkQR()

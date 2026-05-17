@@ -201,6 +201,7 @@
   <ItemGroup>
     <Content Include="Content\all.min.css" />
     <Content Include="Content\BadgePhoto\Dummybadgephoto.jpg" />
+    <Content Include="Content\BadgePhoto\DummyBadgePhotoNew.png" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\custom.css" />
@@ -273,7 +274,12 @@
     <Content Include="Views\Shared\_AddBadge.cshtml" />
     <Content Include="Views\Admin\MasterShowColEventCertificate.cshtml" />
     <Content Include="Views\Admin\_PrintSetupColumnsCertificate.cshtml" />
-    <Content Include="Views\Admin\MasterPrintSetupEventCertificate.cshtml" />
+    <Content Include="Views\Admin\PrintSetupTemplate.cshtml" />
+    <Content Include="Views\Admin\PrintSetupCertificateTemplate.cshtml" />
+    <Content Include="Views\Admin\MasterSendmail.cshtml" />
+    <Content Include="Views\Home\MasterSearchBadgeNew.cshtml" />
+    <Content Include="Views\Home\IndexNew.cshtml" />
+    <Content Include="Views\Home\AddNewBadgeCamera.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

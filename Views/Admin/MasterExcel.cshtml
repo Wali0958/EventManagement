@@ -3,7 +3,7 @@
     ViewBag.Title = "MasterExcel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container">
+<div class="container-fluid">
     <div class="m-3">
         <section class="row">
             <div class="col-12">
@@ -12,7 +12,7 @@
                         <i class="fa fa-calendar-plus"></i> Upload Excel
                     </h5>
                     <div class="row">
-                        <div class="col-md-6 p-3 bg-white">
+                        <div class="col-md-12 p-3 bg-white">
                             <p>1. Please download and insert data as per template</p>
                             <p>2. To change data, delete & upload new excel</p>
                             <a href="~/Content/excel.xlsx">Demo Excel Sheet</a>
@@ -80,73 +80,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <!-- RIGHT COLUMN -->
-                        <div class="col-md-6 p-3 bg-white border-1 border-start">
-
-                            <h5 class="form-section-title">
-                                <i class="fa fa-calendar-plus"></i> Email Content or Send Email
-                            </h5>
-                            @using (Html.BeginForm("SaveContent", "Admin", FormMethod.Post))
-                            {
-                                <div class="mb-3">
-                                    <label>Description</label>
-                                    <textarea name="Description" id="ckeditor" class="form-control" rows="6"></textarea>
-                                   
-                                </div>
-
-                                <button type="submit" class="btn btn-warning pull-right float-end mr-2">Save email details</button>
-                                <div class="clearfix"></div>
-                                <p>
-                                    For put name <span class="texr-danger">lbl_name,lbl_company,lbl_desination,lbl_address,lbleventname,lbldatestart,lbldateend</span>
-                                    it will replace dynamic data
-                                </p>
-                            }
-                            <div class="clearfix"><hr /></div>
-                            <input type="button" value="Send Email Msg to All" class="btn btn-info float-end mb-2" />
-                            <div class="clearfix mt-4"></div>
-                            <div style="overflow: auto; max-height: 500px;">
-                                <div class="table-responsive border rounded shadow-sm mt-4">
-                                    <table class="table table-hover align-middle  mb-0  mtable">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th></th>
-                                                <th>Event Name</th>
-                                                <th>Name</th>
-                                                <th>Company <br />Designation</th>
-
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (Model?.EventExcelUploadListwht != null)
-                                            {
-                                                int count = 1;
-                                                foreach (var item in Model.EventExcelUploadListwht)
-                                                {
-                                                    <tr>
-                                                        <td>@count</td>
-                                                        <td>@item.EventName</td>
-                                                        <td>@item.Name</td>
-                                                        <td>@item.Company <br /> @item.Designation</td>
-                                                        <td>
-                                                            @Html.ActionLink(
-                                                                "Send Email",
-                                                                "SendWhtsupMsg",
-                                                                "Admin",
-                                                                new { id = item.EventId },
-                                                                new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Send message?')" }
-                                                            )
-                                                        </td>
-                                                    </tr>
-                                                    count++;
-                                                }
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
             </div>

@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
 using System.Web;
-using System.Web.UI.WebControls;
 
 namespace EventManagement.Models
 {
@@ -20,7 +14,7 @@ namespace EventManagement.Models
         SqlDataAdapter adp = new SqlDataAdapter();
 
 
-        public DataSet FetchCountData(string Action,int EventId)
+        public DataSet FetchCountData(string Action, int EventId)
         {
             DataSet ds = new DataSet();
             SqlConnection con = new SqlConnection(con_str);
@@ -98,6 +92,11 @@ namespace EventManagement.Models
                 cmd.Parameters.AddWithValue("@pEventBadgePhoto", Event.EventBadgePhoto);
                 cmd.Parameters.AddWithValue("@pBadgeHeight", Event.BadgeHeight);
                 cmd.Parameters.AddWithValue("@pBadgeWidth", Event.BadgeWidth);
+                cmd.Parameters.AddWithValue("@pIsCertificate", Event.IsCertificate);
+                cmd.Parameters.AddWithValue("@pIsDual", Event.IsDual);
+                cmd.Parameters.AddWithValue("@pEventCertificateHeightPhoto", Event.EventCertificatePhoto);
+                cmd.Parameters.AddWithValue("@pCertificateHeight", Event.CertificateHeight);
+                cmd.Parameters.AddWithValue("@pCertificateWidth", Event.CertificateWidth);
                 cmd.Parameters.AddWithValue("@pPrintType", Event.PrintTypeValue);
                 cmd.Parameters.AddWithValue("@pIsActive", Event.IsActive);
                 cmd.Parameters.AddWithValue("@pLoginId", LoginId);
@@ -363,6 +362,34 @@ namespace EventManagement.Models
                 }
             }
         }
+
+        public DataSet SaveEventPrintSetup(string Action, EventSettingCol2 EPS, string LayoutJson, string BackgroundImage, int LoginId)
+        {
+            DataSet ds = new DataSet();
+
+            using (SqlConnection con = new SqlConnection(con_str))
+            {
+                using (SqlCommand cmd = new SqlCommand("usp_MasterPrintSetup", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@pAction", Action);
+                    cmd.Parameters.AddWithValue("@pEventId", EPS.EventId);
+                    cmd.Parameters.AddWithValue("@pLayoutJson", LayoutJson);
+                    cmd.Parameters.AddWithValue("@pBackgroundImage", BackgroundImage);
+                    cmd.Parameters.AddWithValue("@pLoginId", LoginId);
+                    cmd.Parameters.AddWithValue("@pLoginIP", HttpContext.Current.Request.UserHostAddress);
+
+                    SqlDataAdapter adp = new SqlDataAdapter(cmd);
+
+                    con.Open();
+                    adp.Fill(ds);
+                }
+            }
+
+            return ds;
+        }
+
         public DataSet FetchExcelUpload(string Action, Excelupload Exx, int LoginId)
         {
             DataSet ds = new DataSet();
@@ -409,7 +436,9 @@ namespace EventManagement.Models
                 cmd.Parameters.AddWithValue("@pAction", Action);
                 cmd.Parameters.AddWithValue("@pEventId", Exx.EventId);
                 cmd.Parameters.AddWithValue("@pIsActive", Exx.IsActive);
-                cmd.Parameters.AddWithValue("@pEmailContnet", Exx.MailContent);               
+                cmd.Parameters.AddWithValue("@pEmailContnet", Exx.MailContent);
+                cmd.Parameters.AddWithValue("@pMailSubject", Exx.MailSubject);
+                cmd.Parameters.AddWithValue("@pBadgeId", Exx.BadgeId);
                 adp = new SqlDataAdapter(cmd);
                 adp.Fill(ds);
                 return ds;
@@ -607,7 +636,7 @@ namespace EventManagement.Models
             }
         }
 
-        public DataSet SaveExcelpathqr(string Action,int BadgeId, int EventId, string path, int LoginId)
+        public DataSet SaveExcelpathqr(string Action, int BadgeId, int EventId, string path, int LoginId)
         {
             DataSet ds = new DataSet();
             SqlConnection con = new SqlConnection(con_str);
@@ -619,7 +648,7 @@ namespace EventManagement.Models
                 cmd.Parameters.AddWithValue("@pAction", Action);
                 cmd.Parameters.AddWithValue("@pEventId", EventId);
                 cmd.Parameters.AddWithValue("@pBadgeId", BadgeId);
-                cmd.Parameters.AddWithValue("@pCategory", path); 
+                cmd.Parameters.AddWithValue("@pCategory", path);
                 cmd.Parameters.AddWithValue("@pLoginId", LoginId);
                 cmd.Parameters.AddWithValue("@pLoginIP", HttpContext.Current.Request.UserHostAddress);
                 adp = new SqlDataAdapter(cmd);
@@ -745,7 +774,7 @@ namespace EventManagement.Models
         }
 
         public DataSet PrintBadgeCode(string Action, int BadgeId, string CollectBy, string remarks,
-            int EventId,string multiprint)
+            int EventId, string multiprint)
         {
             DataSet ds = new DataSet();
             SqlConnection con = new SqlConnection(con_str);
@@ -780,6 +809,7 @@ namespace EventManagement.Models
         }
 
         public DataSet SearchData(string Action, string text, int EventId, int loginid)
+
         {
             DataSet ds = new DataSet();
             SqlConnection con = new SqlConnection(con_str);
@@ -810,7 +840,7 @@ namespace EventManagement.Models
             }
         }
 
-        public DataSet BadgeUpdate(string Action,  int BadgeId, string Name, string Company, string Designation)
+        public DataSet BadgeUpdate(string Action, int BadgeId, string Name, string Company, string Designation)
         {
             DataSet ds = new DataSet();
             SqlConnection con = new SqlConnection(con_str);
@@ -877,7 +907,37 @@ namespace EventManagement.Models
                 }
             }
         }
-
+        public DataSet UpdateMailStatus(int LoginId, int BadgeId, int isactive)
+        {
+            DataSet ds = new DataSet();
+            SqlConnection con = new SqlConnection(con_str);
+            con.Open();
+            try
+            {
+                cmd = new SqlCommand("usp_MasterEvent", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@pAction", "SendMailUpda");
+                cmd.Parameters.AddWithValue("@pKioskBg", BadgeId);
+                cmd.Parameters.AddWithValue("@pIsActive", isactive);
+                cmd.Parameters.AddWithValue("@pLoginId", LoginId);
+                cmd.Parameters.AddWithValue("@pLoginIP", HttpContext.Current.Request.UserHostAddress);
+                adp = new SqlDataAdapter(cmd);
+                adp.Fill(ds);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                    con.Dispose();
+                }
+            }
+        }
 
 
 

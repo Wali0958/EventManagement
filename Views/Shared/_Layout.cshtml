@@ -50,8 +50,11 @@
                             {
                                 <li class="nav-item">@Html.ActionLink("Kiosk Search", "PrintwithKiosk", "Home", null, new { @class = "nav-link" })</li>
                                 <li class="nav-item">@Html.ActionLink("Search / Print Badge", "MasterSearchBadge", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Search / Print Badge New", "MasterSearchBadgeNew", "Home", null, new { @class = "nav-link" })</li>
                                 <li class="nav-item">@Html.ActionLink("Bulk Print Badge", "Index", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Bulk Print Badge New", "IndexNew", "Home", null, new { @class = "nav-link" })</li>
                                 <li class="nav-item">@Html.ActionLink("Add New Badge", "AddNewBadge", "Home", null, new { @class = "nav-link" })</li>
+                                <li class="nav-item">@Html.ActionLink("Add New Badge Camera", "AddNewBadgeCamera", "Home", null, new { @class = "nav-link" })</li>
                                 <li class="nav-item">@Html.ActionLink("Scanning", "Scanning", "Home", null, new { @class = "nav-link" })</li>
                             }
                             else if (Session["RoleType"].ToString().Trim() == "GS")
@@ -85,12 +88,23 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>@Html.ActionLink("Print Setup Badge", "MasterPrintSetupEvent", "Admin", null, new { @class = "dropdown-item" })</li>
-                                        <li>@Html.ActionLink("Print Setup Certificate", "MasterPrintSetupEventCertificate", "Admin", null, new { @class = "dropdown-item" })</li>
+                                        @*<li>@Html.ActionLink("Print Setup Certificate", "MasterPrintSetupEventCertificate", "Admin", null, new { @class = "dropdown-item" })</li>*@
+                                        <li>@Html.ActionLink("Print Setup (Drag Drop)", "PrintSetupTemplate", "Admin", null, new { @class = "dropdown-item" })</li>
+                                        <li>@Html.ActionLink("Print Certificate Setup (Drag Drop)", "PrintSetupCertificateTemplate", "Admin", null, new { @class = "dropdown-item" })</li>
                                     </ul>
                                 </li>
                                 if (Session["RoleType"].ToString().Trim() == "A" || Session["RoleType"].ToString().Trim() == "S")
                                 {
-                                    <li class="nav-item">@Html.ActionLink("Upload Excel", "MasterExcel", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                            Master Excel
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="nav-item">@Html.ActionLink("Upload Excel", "MasterExcel", "Admin", new { area = "" }, new { @class = "dropdown-item" })</li>
+                                            <li class="nav-item">@Html.ActionLink("Master Email (Event Wise)", "MasterSendmail", "Admin", new { area = "" }, new { @class = "dropdown-item" })</li>
+
+                                        </ul>
+                                    </li>
                                 }
                                 <li class="nav-item">@Html.ActionLink("Master Badge", "MasterBadge", "Admin", null, new { @class = "nav-link" })</li>
                                 <li class="nav-item">@Html.ActionLink("Bulk QR", "BulkQR", "Admin", null, new { @class = "nav-link" })</li>
@@ -123,7 +137,7 @@
             </div>
         </div>
     </nav>
-    <div class="container-fluid body-content mt-3">
+   
         @if (Session["RoleType"].ToString().Trim() == "S" || Session["RoleType"].ToString().Trim() == "GS")
         {
             <div class="row g-2 mb-3 text-center">
@@ -160,19 +174,16 @@
         <footer class="mt-4 p-3 text-center bg-light rounded shadow-sm">
             <small><span class="text-danger fw-bold"><i class="fa fa-phone"></i> Nadeem – 8368352220</span><br />© @DateTime.Now.Year – IT Harb Solution</small>
         </footer>
-    </div>
+   
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
-    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validae.js"></script>
     <script src="~/Scripts/jquery-ui.min.js"></script>
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
     @*<script src="~/Scripts/bootstrap.js"></script>*@
     <script src="~/Scripts/all.min.js"></script>
     <script src="~/Scripts/dataTables.min.js"></script>
     @*<script src="https://cdn.ckeditor.com/ckeditor5/41.3.0/classic/ckeditor.js"></script>*@
-    <script src="~/Scripts/ckeditor.js"></script>
     <script src="~/Scripts/sweetalert2@11.js"></script>
-
-
     <div class="modal" tabindex="-1" id="mdlmsg" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="background-color:#F1F1F1">
@@ -191,7 +202,7 @@
     </div>
     <script>
      $(document).ready(function () {
-         if ('@TempData["Msg"]' !== "") {
+         if ('@TempData["Msg"]' !== "") {            
              $("#mdlmsg").modal('show');
          }
      });
@@ -286,7 +297,7 @@
     </script>
     <script>
         $(document).ready(function () {
-            let typingTimer;
+            let typingTimer=null;
             const typingDelay = 400; // wait time (ms) after user stops typing
 
             function searchData() {
@@ -446,22 +457,27 @@
         });
     </script>
     <script>
-        ClassicEditor
-            .create(document.querySelector('#ckeditor'), {
-                toolbar: [
-                    'bold', 'italic', 'underline',
-                    '|',
-                    'numberedList', 'bulletedList',
-                    '|',
-                    'link',
-                    '|',
-                    'undo', 'redo',
-                    'height', '180'
-                ]
-            })
-            .catch(error => {
-                console.error(error);
-            });
+    document.addEventListener("DOMContentLoaded", function () {
+        const el = document.querySelector('#ckeditor');
+        if (el) {
+            ClassicEditor
+                .create(el, {
+                    toolbar: [
+                        'bold', 'italic', 'underline',
+                        '|',
+                        'numberedList', 'bulletedList',
+                        '|',
+                        'link',
+                        '|',
+                        'undo', 'redo'
+                    ]
+                })
+                .catch(error => {
+                    console.error("CKEditor Error:", error);
+                });
+        }
+
+    });
     </script>
     <script>
         $(document).ready(function () {

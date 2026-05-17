@@ -1,23 +1,19 @@
 ﻿using ClosedXML.Excel;
 using EventManagement.Models;
+using QRCoder;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using static Microsoft.IO.RecyclableMemoryStreamManager;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.EMMA;
-using QRCoder;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Text;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using static iTextSharp.text.pdf.PdfDocument;
 
 namespace EventManagement.Controllers
 {
@@ -610,7 +606,6 @@ namespace EventManagement.Controllers
         [HttpGet]
         public ActionResult GetBadgeByFilter(int IsPrint = 0, string category = "", string Company = "")
         {
-            string mquery = "";
             GetPrintBadge model = new GetPrintBadge();
             try
             {
@@ -652,7 +647,6 @@ namespace EventManagement.Controllers
         {
             try
             {
-                DataSet mds;
                 if (Session["EventId"] == null)
                 {
                     TempData["Msg"] = "Session expired.Please relogin";
@@ -868,10 +862,10 @@ namespace EventManagement.Controllers
                 throw ex;
             }
         }
-        
+
         [HttpPost]
-        public JsonResult MasterBadgeSaveCodeandPrint(allbadgebyevent modal,HttpPostedFileBase Photo,string SelectedFields,string Name,string Designation,string Company,
-        string Category,string Mobile,string Email,string Country,string Remarks)
+        public JsonResult MasterBadgeSaveCodeandPrint(allbadgebyevent modal, HttpPostedFileBase Photo, string SelectedFields, string Name, string Designation, string Company,
+        string Category, string Mobile, string Email, string Country, string Remarks)
         {
             try
             {
@@ -957,7 +951,7 @@ namespace EventManagement.Controllers
                     .FindPartialView(ControllerContext, viewName);
                 if (viewResult.View == null)
                     throw new FileNotFoundException("Partial view '" + viewName + "' not found.");
-                ViewContext viewContext = new ViewContext(ControllerContext,viewResult.View,ViewData,TempData,sw);
+                ViewContext viewContext = new ViewContext(ControllerContext, viewResult.View, ViewData, TempData, sw);
                 viewResult.View.Render(viewContext, sw);
                 return sw.ToString();
             }
@@ -978,7 +972,7 @@ namespace EventManagement.Controllers
                     return Json(new { success = false }, JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
@@ -997,7 +991,7 @@ namespace EventManagement.Controllers
                     return Json(new { success = false }, JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
@@ -1030,7 +1024,7 @@ namespace EventManagement.Controllers
                     return Json(new { success = false }, JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
@@ -1165,9 +1159,9 @@ namespace EventManagement.Controllers
                         worksheet.Cell(row, 9).Value = Event[13].ToString() + "/" + Event[15].ToString();
                         worksheet.Cell(row, 10).Value = Event[21].ToString();
                         worksheet.Cell(row, 11).Value = Event[22].ToString() + "/" + Event[24].ToString() + "/" + Event[23].ToString();
-                        if(Event[28].ToString().ToLower()=="true")
-                        { 
-                        worksheet.Cell(row, 12).Value = "Yes" + "/" + Event[27].ToString();
+                        if (Event[28].ToString().ToLower() == "true")
+                        {
+                            worksheet.Cell(row, 12).Value = "Yes" + "/" + Event[27].ToString();
                         }
                         else
                         {
@@ -1211,8 +1205,8 @@ namespace EventManagement.Controllers
                     worksheet.Cell(1, 6).Value = "Mobile";
                     worksheet.Cell(1, 7).Value = "Email";
                     worksheet.Cell(1, 8).Value = "Country";
-                   // worksheet.Cell(1, 9).Value = "ID Type";
-                   // worksheet.Cell(1, 10).Value = "ID Number";
+                    // worksheet.Cell(1, 9).Value = "ID Type";
+                    // worksheet.Cell(1, 10).Value = "ID Number";
                     worksheet.Cell(1, 9).Value = "Print/Reprint Status";
                     worksheet.Cell(1, 10).Value = "Visit On";
                     worksheet.Cell(1, 11).Value = "Kit Status";
@@ -1237,8 +1231,8 @@ namespace EventManagement.Controllers
                         worksheet.Cell(row, 6).Value = Event[7].ToString();
                         worksheet.Cell(row, 7).Value = Event[8].ToString();
                         worksheet.Cell(row, 8).Value = Event[9].ToString();
-                      //  worksheet.Cell(row, 9).Value = Event[10].ToString();
-                      //  worksheet.Cell(row, 10).Value = Event[11].ToString();
+                        //  worksheet.Cell(row, 9).Value = Event[10].ToString();
+                        //  worksheet.Cell(row, 10).Value = Event[11].ToString();
                         worksheet.Cell(row, 9).Value = Event[13].ToString() + "/" + Event[15].ToString();
                         worksheet.Cell(row, 10).Value = Event[21].ToString();
                         worksheet.Cell(row, 11).Value = Event[22].ToString() + "/" + Event[24].ToString() + "/" + Event[23].ToString();
@@ -1346,9 +1340,9 @@ namespace EventManagement.Controllers
                         stream.Position = 0;
                         var attachment = new Attachment(stream, "EventData_" + EventName + ".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                         message.Attachments.Add(attachment);
-                        var smtp = new SmtpClient("smtp.gmail.com", 587)
+                        var smtp = new SmtpClient(ConfigurationManager.AppSettings["SmtpHost"], Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]))
                         {
-                            Credentials = new NetworkCredential("scan.namaste@gmail.com", "atrhkgnvnfvhpwda"), //Namaste1771
+                            Credentials = new NetworkCredential(ConfigurationManager.AppSettings["FromMail"], ConfigurationManager.AppSettings["MailPassword"]), //Namaste1771
                             EnableSsl = true
                         };
                         smtp.Send(message);

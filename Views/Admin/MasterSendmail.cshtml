@@ -1,0 +1,156 @@
+﻿@model EventManagement.Models.Excelupload
+@{
+    ViewBag.Title = "MasterExcel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 350px !important;
+        }
+    </style>
+
+}
+<div class="container-fluid">
+    <div class="m-3">
+        <section class="row">
+            <div class="col-12">
+                <div class="form-card">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <h5 class="form-section-title">
+                                <i class="fa fa-calendar-plus"></i> Email Content or Send Email
+                            </h5>
+                            @using (Html.BeginForm("SaveMailContent", "Admin", FormMethod.Post))
+                            {
+                                <div class="col-md-12 p-2">
+                                    <label>Select Event</label>
+                                    <select id="EventId" name="EventId" class="form-select">
+                                        @if (Model?.EventDrop != null)
+                                        {
+                                            <option value="0">--Select--</option>
+                                            foreach (var item in Model.EventDrop)
+                                            {
+                                                <option value="@item.EventId">@item.EventName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Mail Subject</label>
+                                    <input type="text" name="MailSubject" id="txtSubject" class="form-control" placeholder="Please enter subject (it will print in bold)" />
+
+                                </div>
+                                <div class="mb-3">
+                                    <label>Description</label>
+                                    <textarea name="MailContent" id="mckeditor" class="form-control" rows="6" placeholder="Your email content here...
+                                    For put name lbl_name,lbl_company, lbl_desination, lbl_address, lbleventname, lbldatestart, lbldateend it will replace dynamic data"></textarea>
+
+                                </div>
+
+                                <button type="submit" class="btn btn-warning pull-right float-end mr-2">Save email details</button>
+                                <div class="clearfix"></div>
+                                <p>
+                                    For put name <span class="text-danger fa-bold">lbl_name, lbl_company, lbl_desination, lbl_address, lbleventname, lbldatestart, lbldateend</span>
+                                    it will replace dynamic data
+                                </p>
+                            }
+
+                        </div>
+                        <div class="col-md-6">
+                            <div style="overflow: auto; max-height: 500px;">
+                                <div class="table-responsive  rounded">
+                                    @using (Html.BeginForm("SendMailToAll", "Admin", FormMethod.Post))
+                                    {
+                                        <input type="hidden" id="hdnEventId" name="EventId" />
+                                        <button type="submit" class="btn btn-info float-end mb-2">
+                                            Send Email Msg to All
+                                        </button>
+                                    }
+                                    <table class="table table-hover mtable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th></th>
+                                                <th>Name</th>
+                                                <th>Company <br />Designation</th>
+
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model?.EventExcelUploadListwht != null)
+                                            {
+                                                int count = 1;
+                                                foreach (var item in Model.EventExcelUploadListwht)
+                                                {
+                                                    <tr>
+                                                        <td>@count</td>
+                                                        <td>@item.Name</td>
+                                                        <td>@item.Company <br /> @item.Designation</td>
+                                                        <td>
+                                                            @Html.ActionLink("Send Email", "SendSingleMail", "Admin",
+                                                                new { badgeid = @item.BadgeId, eventid = @item.EventId },
+                                                                new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Send Email?')" }
+                                                            )
+                                                        </td>
+                                                    </tr>
+                                                    count++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/ckeditor.js"></script>
+<script>
+let editorInstance;
+    ClassicEditor
+        .create(document.querySelector('#mckeditor'))
+        .then(editor => {
+            editorInstance = editor;
+        })
+        .catch(error => {
+
+            console.error(error);
+        });
+
+    $(document).ready(function () {
+        $('#EventId').change(function () {
+            $('#hdnEventId').val($(this).val());
+            var eventId = $(this).val();
+            $.ajax({
+                url: '@Url.Action("GetMailContentByEvent", "Admin")',
+                type: 'GET',
+                data: { eventId: eventId },
+                success: function (res) {
+                    if (res.status) {
+                        $('#txtSubject').val(res.subject);
+                        if (editorInstance) {
+                            editorInstance.setData(res.content);
+                        }
+                    }
+                    else {
+                        $('#txtSubject').val('');
+                        if (editorInstance) {
+                            editorInstance.setData('');
+                        }
+                    }
+                }
+            });
+        });
+        $('form').submit(function () {
+            if (editorInstance) {
+                $('#mckeditor').val(editorInstance.getData());
+            }
+        });
+    });
+</script>
